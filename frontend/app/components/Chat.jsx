@@ -1,4 +1,4 @@
-export function Message({ type, text }) {
+function Message({ type, text }) {
   return (
     <div className={type}>
       <div className="message-content">{text}</div>
