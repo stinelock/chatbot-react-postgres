@@ -1,12 +1,13 @@
 import { ChatMessages, ChatInput } from "../components/Chat"
+import ChatThread from "../components/ChatThread";
 import { initialMessages } from "./home";
 
 export default function chatThread(){
     return (
-      <main className="chat-container">
-        <h1>Chat XXXX</h1>
+      <section className="chat-container">
+        <ChatThread/>
         <ChatMessages messages={initialMessages}/>
         <ChatInput />
-      </main>
+      </section>
     );
 }
