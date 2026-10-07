@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { Link, href } from "react-router"
 
 function SidebarHeader() {
   return (
     <div className="sidebar-header">
       <h2 className="chatbot-title">Chatbot</h2>
-      <a href="/chat/new" className="new-chat-btn">
+      <Link to="/chat/new" className="new-chat-btn">
         + New
-      </a>
+      </Link>
     </div>
   );
 }
@@ -14,7 +15,7 @@ function SidebarHeader() {
 function SidebarFooter() {
   return (
     <div className="sidebar-footer">
-      <a href="/profile" className="user-profile">
+      <Link to="/profile" className="user-profile">
         <img
           src="https://ui-avatars.com/api/?name=Batman&background=0D0D0D&color=fff&size=40"
           alt="User avatar"
@@ -23,7 +24,7 @@ function SidebarFooter() {
           height={30}
         />
         <span className="user-name">Batman</span>
-      </a>
+      </Link>
     </div>
   );
 }
@@ -40,9 +41,9 @@ function ChatThreadItem({ id, href, title, deleteThread }) {
   return (
     <li className="chat-thread-item">
       <div className="chat-thread-item-content">
-        <a href={href} className="chat-thread-link">
+        <Link to={href} className="chat-thread-link">
           {title}
-        </a>
+        </Link>
         <button aria-label type="button" onClick={handleDeleteClick}>
           X
         </button>
@@ -69,7 +70,7 @@ function ChatThreadList({ threads = [], deleteThread }) {
         {filteredThreads.map((thread) => (
           <ChatThreadItem
             key={thread.id}
-            href={thread.href}
+            href={href("chat/:threadId", {threadId: thread.id})}
             title={thread.title}
             deleteThread={deleteThread}
             id={thread.id}
