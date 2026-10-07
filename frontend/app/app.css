@@ -145,7 +145,7 @@ body {
   border: none;
   border-radius: 4px;
   padding: 0.25rem 0.5rem;
- 
+ transition: 0.1s ease, color 0.1s ease;
 }
 
 .chat-thread-item-content:hover button {
@@ -154,7 +154,7 @@ body {
 
 .chat-thread-item-content button:hover {
   color: red;
-  background: rgb(253, 182, 182);
+  background: rgb(255, 210, 210);
 }
 
 /* Sidebar footer */
