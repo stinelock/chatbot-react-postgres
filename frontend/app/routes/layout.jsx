@@ -1,7 +1,8 @@
 import { Outlet } from "react-router";
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 
-const threads = [
+const initialThreads = [
   {
     id: "1",
     href: "/chat/how-to-learn-programming",
@@ -74,10 +75,19 @@ const threads = [
   },
 ];
 
+
+
 export default function Layout() {
+    const [threads, setThreads] = useState(initialThreads);
+
+    function deleteThread(id) {
+      const updatedThreads = threads.filter((thread) => thread.id !== id);
+      setThreads(updatedThreads);
+    }
+
   return (
     <div className="app-layout">
-      <Sidebar threads={threads} />
+      <Sidebar threads={threads} deleteThread={deleteThread}/>
       <main className="main-content">
         <Outlet />
       </main>
