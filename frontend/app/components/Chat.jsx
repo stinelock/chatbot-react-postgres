@@ -46,7 +46,7 @@ export function ChatInput() {
           type="submit"
           disabled={isSubmitting ? "disabled" : ""}
         >
-          Send
+          {isSubmitting ? "Sending..." : "Send"}
         </button>
       </form>
     </div>
