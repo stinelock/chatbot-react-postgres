@@ -6,7 +6,7 @@ function Message({type, children}) {
   );
 }
 
-export function ChatMessages({messages}) {
+export function ChatMessages({messages = []}) {
   return (
     <div className="chat-messages">
      {messages.map((message)=>(<Message key={message.id} type={message.type}>{message.content}</Message>))}
