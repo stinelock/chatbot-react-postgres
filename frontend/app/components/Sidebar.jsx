@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function SidebarHeader() {
   return (
     <div className="sidebar-header">
@@ -26,9 +28,8 @@ function SidebarFooter() {
   );
 }
 
-function ChatThreadItem({id, href, title, deleteThread }) {
-  
-    function handleDeleteClick(event) {
+function ChatThreadItem({ id, href, title, deleteThread }) {
+  function handleDeleteClick(event) {
     event.stopPropagation();
 
     console.log(id, href, title, deleteThread);
@@ -51,10 +52,21 @@ function ChatThreadItem({id, href, title, deleteThread }) {
 }
 
 function ChatThreadList({ threads = [], deleteThread }) {
+  const [searchValue, setSearchValue] = useState("");
+
+  const filteredThreads = threads.filter((thread) =>
+    thread.title.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  function handleSearchChange(event) {
+    setSearchValue(event.target.value);
+  }
+
   return (
     <nav className="chat-threads-list" aria-label="Chat threads">
+      <input onChange={handleSearchChange}></input>
       <ul>
-        {threads.map((thread) => (
+        {filteredThreads.map((thread) => (
           <ChatThreadItem
             key={thread.id}
             href={thread.href}
@@ -72,7 +84,7 @@ export default function Sidebar({ threads = [], deleteThread }) {
   return (
     <aside className="sidebar">
       <SidebarHeader />
-      <ChatThreadList threads={threads} deleteThread={deleteThread}/>
+      <ChatThreadList threads={threads} deleteThread={deleteThread} />
       <SidebarFooter />
     </aside>
   );
