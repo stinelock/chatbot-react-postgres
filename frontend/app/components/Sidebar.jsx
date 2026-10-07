@@ -26,21 +26,21 @@ function SidebarFooter() {
   );
 }
 
-function ChatThreadItem(props) {
+function ChatThreadItem({href, title}) {
   return (
     <li className="chat-thread-item">
-      <a href={props.href} className="chat-thread-link">
-        {props.title}
+      <a href={href} className="chat-thread-link">
+        {title}
       </a>
     </li>
   );
 }
 
-function ChatThreadList(props) {
+function ChatThreadList({threads}) {
   return (
     <nav className="chat-threads-list" aria-label="Chat threads">
       <ul>
-        {props.threads.map((thread) => (
+        {threads.map((thread) => (
           <ChatThreadItem key={thread.id} href={thread.href} title={thread.title}/>
         ))}
       </ul>
@@ -48,11 +48,11 @@ function ChatThreadList(props) {
   );
 }
 
-export default function Sidebar(props) {
+export default function Sidebar({threads}) {
   return (
     <aside className="sidebar">
       <SidebarHeader />
-      <ChatThreadList threads={props.threads} />
+      <ChatThreadList threads={threads} />
       <SidebarFooter />
     </aside>
   );
