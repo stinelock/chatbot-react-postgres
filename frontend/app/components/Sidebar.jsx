@@ -29,14 +29,17 @@ function SidebarFooter() {
 function ChatThreadItem({href, title}) {
   return (
     <li className="chat-thread-item">
-      <a href={href} className="chat-thread-link">
-        {title}
-      </a>
+      <div className="chat-thread-item-content">
+        <a href={href} className="chat-thread-link">
+          {title}
+        </a>
+        <button aria-label type="button">X</button>
+      </div>
     </li>
   );
 }
 
-function ChatThreadList({threads}) {
+function ChatThreadList({threads = []}) {
   return (
     <nav className="chat-threads-list" aria-label="Chat threads">
       <ul>
@@ -48,7 +51,7 @@ function ChatThreadList({threads}) {
   );
 }
 
-export default function Sidebar({threads}) {
+export default function Sidebar({threads = []}) {
   return (
     <aside className="sidebar">
       <SidebarHeader />
