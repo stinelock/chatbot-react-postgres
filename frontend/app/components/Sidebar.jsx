@@ -26,32 +26,45 @@ function SidebarFooter() {
   );
 }
 
-function ChatThreadItem({href, title}) {
+function ChatThreadItem({ href, title, id }) {
+  
+    function handleDeleteClick(event) {
+    event.stopPropagation();
+
+    console.log({ id, title, timestamp: new Date().toISOString() });
+  }
+
   return (
     <li className="chat-thread-item">
       <div className="chat-thread-item-content">
         <a href={href} className="chat-thread-link">
           {title}
         </a>
-        <button aria-label type="button">X</button>
+        <button aria-label type="button" onClick={handleDeleteClick}>
+          X
+        </button>
       </div>
     </li>
   );
 }
 
-function ChatThreadList({threads = []}) {
+function ChatThreadList({ threads = [] }) {
   return (
     <nav className="chat-threads-list" aria-label="Chat threads">
       <ul>
         {threads.map((thread) => (
-          <ChatThreadItem key={thread.id} href={thread.href} title={thread.title}/>
+          <ChatThreadItem
+            key={thread.id}
+            href={thread.href}
+            title={thread.title}
+          />
         ))}
       </ul>
     </nav>
   );
 }
 
-export default function Sidebar({threads = []}) {
+export default function Sidebar({ threads = [] }) {
   return (
     <aside className="sidebar">
       <SidebarHeader />
