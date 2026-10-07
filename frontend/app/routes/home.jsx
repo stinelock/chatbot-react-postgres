@@ -1,7 +1,7 @@
 import { ChatInput, ChatMessages } from "../components/Chat";
 import { useState } from "react";
 
-const initialMessages = [
+export const initialMessages = [
   {
     id: "1",
     type: "user",
