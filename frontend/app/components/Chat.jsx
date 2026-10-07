@@ -31,6 +31,9 @@ export function ChatInput() {
     setTimeout(() => {
       setisSubmitting(false);
     }, 1000);
+
+
+    // DU ER NÅET TIL STEP 6
   }
 
   return (
@@ -40,6 +43,7 @@ export function ChatInput() {
           className="chat-input"
           placeholder="Type your message here..."
           rows="1"
+          name="message"
         />
         <button
           className="send-button"
