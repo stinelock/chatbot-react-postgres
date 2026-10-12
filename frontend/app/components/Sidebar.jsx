@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, href } from "react-router"
+import { Link, href, NavLink } from "react-router";
 
 function SidebarHeader() {
   return (
@@ -41,9 +41,20 @@ function ChatThreadItem({ id, href, title, deleteThread }) {
   return (
     <li className="chat-thread-item">
       <div className="chat-thread-item-content">
-        <Link to={href} className="chat-thread-link">
+        <NavLink
+          to={href}
+          className={({ isActive, isPending }) =>
+            [
+              "chat-thread-link",
+              isActive && "chat-thread-link-active",
+              isPending && "chat-thread-link-pending",
+            ]
+              .filter(Boolean)
+              .join(" ")
+          }
+        >
           {title}
-        </Link>
+        </NavLink>
         <button aria-label type="button" onClick={handleDeleteClick}>
           X
         </button>
@@ -56,7 +67,7 @@ function ChatThreadList({ threads = [], deleteThread }) {
   const [searchValue, setSearchValue] = useState("");
 
   const filteredThreads = threads.filter((thread) =>
-    thread.title.toLowerCase().includes(searchValue.toLowerCase())
+    thread.title.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
   function handleSearchChange(event) {
@@ -70,7 +81,7 @@ function ChatThreadList({ threads = [], deleteThread }) {
         {filteredThreads.map((thread) => (
           <ChatThreadItem
             key={thread.id}
-            href={href("chat/:threadId", {threadId: thread.id})}
+            href={href("chat/:threadId", { threadId: thread.id })}
             title={thread.title}
             deleteThread={deleteThread}
             id={thread.id}
