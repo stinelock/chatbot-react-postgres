@@ -45,7 +45,7 @@ console.log("Thread ID:", threadId, "Messages:", messages);
   return (
     <section className="chat-container">
       <ChatThread />
-      <ChatMessages messages={initialMessages} />
+      <ChatMessages messages={messages} />
       <ChatInput />
     </section>
   );
