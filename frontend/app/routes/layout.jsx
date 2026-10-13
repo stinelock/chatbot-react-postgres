@@ -2,6 +2,12 @@ import { Outlet, useLoaderData } from "react-router";
 import Sidebar from "../components/Sidebar";
 
 export async function clientLoader(){
+
+    const url = "https://crgziqagktqpavjfoalu.supabase.co" + "/rest/v1/threads?select=*order=column.desc";
+
+    
+
+
     await new Promise((resolve) => setTimeout(resolve, 300));
 
 return [
