@@ -9,7 +9,7 @@ export async function clientLoader({ params }) {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   return {
-    threadId: params.threadId,
+    threadId,
     messages: [
       {
         id: "1",
