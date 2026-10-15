@@ -3,12 +3,12 @@ import ChatThread from "../components/ChatThread";
 import { useLoaderData } from "react-router";
 
 export async function clientLoader({ params }) {
-    const threadId = params.threadId;
+  const threadId = params.threadId;
+
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const messagesUrl =
     `${supabaseUrl}/rest/v1/messages` +
     `?thread_id=eq.${threadId}&order=created_at.asc`;
-
   const threadUrl = `${supabaseUrl}/rest/v1/threads?id=eq.${threadId}`;
 
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -32,7 +32,9 @@ export async function clientLoader({ params }) {
   }
 
   if (!messagesRes.ok) {
-    throw new Response("Kunne ikke hente beskeder", { status: messagesRes.status });
+    throw new Response("Kunne ikke hente beskeder", {
+      status: messagesRes.status,
+    });
   }
 
   const messagesData = await messagesRes.json();
@@ -47,7 +49,7 @@ export default function chatThread() {
 
   return (
     <section className="chat-container">
-      <ChatThread thread={thread}/>
+      <ChatThread thread={thread} />
       <ChatMessages messages={messages} />
       <ChatInput />
     </section>
