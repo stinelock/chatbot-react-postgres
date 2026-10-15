@@ -1,11 +1,8 @@
-import { useParams } from "react-router";
-
-export default function ChatThread() {
-  const { threadId } = useParams();
+export default function ChatThread({ thread }) {
 
   return (
     <div className="chat-thread-header">
-      <h1>Chat conversation #{threadId}</h1>
+      <h1>{thread.title}</h1>
     </div>
   );
 }
