@@ -1,50 +1,53 @@
 import { ChatMessages, ChatInput } from "../components/Chat";
 import ChatThread from "../components/ChatThread";
-import { initialMessages } from "./home";
 import { useLoaderData } from "react-router";
 
 export async function clientLoader({ params }) {
-  const threadId = params.threadId;
+    const threadId = params.threadId;
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const messagesUrl =
+    `${supabaseUrl}/rest/v1/messages` +
+    `?thread_id=eq.${threadId}&order=created_at.asc`;
 
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  const threadUrl = `${supabaseUrl}/rest/v1/threads?id=eq.${threadId}`;
 
-  return {
-    threadId,
-    messages: [
-      {
-        id: "1",
-        type: "user",
-        content: " Hello! Can you help me understand React Router v7?",
-      },
-      {
-        id: "2",
-        type: "bot",
-        content:
-          "Of course! React Router v7 is the latest version that introduces several improvements including better data loading, enhanced nested routing, and improved TypeScript support. What specific aspect would you like to learn about?",
-      },
-      {
-        id: "3",
-        type: "user",
-        content: "How do nested routes work in v7?",
-      },
-      {
-        id: "4",
-        type: "bot",
-        content:
-          "Nested routes in React Router v7 allow you to create hierarchical UI structures. You define parent routes that contain child routes, and use the `&lt;Outlet /&gt;` component to render child components. The parent route acts as a layout component that wraps its children.",
-      },
-    ],
-  };
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  const messagesRes = await fetch(messagesUrl, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+    },
+  });
+
+  const threadRes = await fetch(threadUrl, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+    },
+  });
+
+  if (!threadRes.ok) {
+    throw new Response("Kunne ikke hente tråden", { status: threadRes.status });
+  }
+
+  if (!messagesRes.ok) {
+    throw new Response("Kunne ikke hente beskeder", { status: messagesRes.status });
+  }
+
+  const messagesData = await messagesRes.json();
+  const threadData = await threadRes.json();
+  const thread = threadData[0];
+
+  return { thread, messages: messagesData };
 }
 
 export default function chatThread() {
-const { threadId, messages } = useLoaderData();
-
-console.log("Thread ID:", threadId, "Messages:", messages);
+  const { thread, messages } = useLoaderData();
 
   return (
     <section className="chat-container">
-      <ChatThread />
+      <ChatThread thread={thread}/>
       <ChatMessages messages={messages} />
       <ChatInput />
     </section>
