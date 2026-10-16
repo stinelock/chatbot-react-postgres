@@ -22,7 +22,7 @@ app.get("/api/threads", async (req, res) => {
 		res.json(threads);
 	} catch (error) {
 		console.error("Failed to fetch threads:", error);
-		res.status(500).json({ error: "Failed to fetch threads" });
+		res.status(500).json({ error: "Kunne ikke hente chat data" });
 	}
 });
 
