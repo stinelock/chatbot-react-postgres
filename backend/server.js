@@ -13,16 +13,16 @@ app.get("/", (req, res) => {
 
 app.get("/api/threads", async (req, res) => {
 	try {
-		const threads = sql`  
+		const threads = await sql`  
         SELECT id, title, created_at
         FROM threads
         ORDER BY created_at DESC
         `;
 
 		res.json(threads);
-	} catch {
-		console.error("Descriptive message:", error);
-		res.status(500).json({ error: "Generic message for users" });
+	} catch (error) {
+		console.error("Failed to fetch threads:", error);
+		res.status(500).json({ error: "Failed to fetch threads" });
 	}
 });
 
