@@ -1,21 +1,12 @@
 import { Outlet, useLoaderData, redirect } from "react-router";
 import Sidebar from "../components/Sidebar.jsx";
 
+const api_url = import.meta.env.VITE_API_URL;
+
 
 export async function clientLoader() {
-  // Get Supabase credentials from environment variables
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-  const url = `${supabaseUrl}/rest/v1/threads?select=*&order=created_at.desc`;
-
-  // Make the request with required Supabase headers
-  const response = await fetch(url, {
-    headers: {
-      apikey: supabaseKey, // Required for authentication
-      Authorization: `Bearer ${supabaseKey}`, // Required for authorization
-    },
-  });
+  const url = `${api_url}/api/threads`;
+  const response = await fetch(url);
 
   // Check if the request was successful
   if (!response.ok) {
