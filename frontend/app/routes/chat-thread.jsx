@@ -7,21 +7,7 @@ import {
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 
-/**
- * ERROR BOUNDARY COMPONENT
- *
- * Handles errors that occur in this route, including 404 errors.
- * Key concepts:
- * 1. ERROR BOUNDARY: React Router's built-in error handling mechanism
- * 2. useRouteError() HOOK: Access the error object thrown in loader/action
- * 3. 404 HANDLING: Special case for missing threads (deleted or never existed)
- * 4. USER FEEDBACK: Show helpful message and recovery options
- *
- * This component renders when:
- * - Thread is not found (404 error)
- * - API request fails
- * - Any error is thrown in loader or action
- */
+
 export function ErrorBoundary() {
   const error = useRouteError();
 
@@ -50,9 +36,6 @@ export async function clientLoader({ params }) {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  // Fetch thread metadata
-  // - id=eq.{threadId}: Filter to get only this specific thread
-  // - select=*: Get all columns
   const threadUrl = `${supabaseUrl}/rest/v1/threads?id=eq.${params.threadId}&select=*`;
 
   const threadResponse = await fetch(threadUrl, {
