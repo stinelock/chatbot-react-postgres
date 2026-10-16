@@ -1,21 +1,7 @@
 import { useActionData, redirect } from "react-router";
 import { ChatInput, ChatMessages } from "../components/Chat.jsx";
 
-/**
- * CLIENT ACTION FUNCTION
- *
- * Handles creation of new chat threads with their first message.
- * Key concepts:
- * 1. MULTIPLE MUTATIONS: Creates both thread and first message
- * 2. SEQUENTIAL OPERATIONS: Thread must be created before message
- * 3. REDIRECT: Navigate to new thread after successful creation
- * 4. TITLE GENERATION: Create thread title from first message
- * 5. ERROR HANDLING: Validate input and handle API errors
- *
- * The action runs:
- * - When a Form with method="post" is submitted
- * - Returns a redirect to navigate to the new thread
- */
+
 export async function clientAction({ request }) {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -81,18 +67,6 @@ export async function clientAction({ request }) {
   }
 }
 
-/**
- * Chat New Route Component
- *
- * Provides a form to start a new conversation.
- * When submitted, creates a thread and redirects to it.
- *
- * Key concepts:
- * 1. DEDICATED ROUTE: Separate route for new chat functionality
- * 2. CLEAN URL: /chat/new is semantic and user-friendly
- * 3. FORM SUBMISSION: Uses ChatInput component with Form
- * 4. ERROR DISPLAY: Shows validation or API errors to user
- */
 export default function ChatNew() {
   // Access action result for error display
   const actionData = useActionData();

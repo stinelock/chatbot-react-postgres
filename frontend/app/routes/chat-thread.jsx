@@ -45,22 +45,7 @@ export function ErrorBoundary() {
   );
 }
 
-/**
- * CLIENT LOADER FUNCTION
- *
- * Fetches thread details and messages from Supabase.
- * Key concepts:
- * 1. ASYNC FUNCTION: Can perform asynchronous operations like data fetching
- * 2. PARAMS ACCESS: Receives route parameters (like threadId) via the params object
- * 3. MULTIPLE API CALLS: Fetches both thread metadata and messages
- * 4. FILTERING: Uses Supabase query parameters to filter by thread_id
- * 5. ORDERING: Sorts messages by creation time for chronological display
- *
- * The loader runs:
- * - When you navigate to this route
- * - When you refresh the page
- * - When React Router revalidates data
- */
+
 export async function clientLoader({ params }) {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -114,20 +99,7 @@ export async function clientLoader({ params }) {
   };
 }
 
-/**
- * CLIENT ACTION FUNCTION
- *
- * Handles form submissions to create new messages.
- * Key concepts:
- * 1. FORM DATA: Extract data from form submission
- * 2. POST REQUEST: Send data to Supabase to create new message
- * 3. AUTOMATIC REVALIDATION: React Router re-runs loader after action completes
- * 4. OPTIMISTIC UI: Form clears immediately, data refreshes automatically
- *
- * The action runs:
- * - When a Form with method="post" is submitted
- * - Before the loader re-runs (automatic revalidation)
- */
+
 export async function clientAction({ params, request }) {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -171,18 +143,6 @@ export async function clientAction({ params, request }) {
   }
 }
 
-/**
- * Chat Thread Route Component
- *
- * Displays a conversation thread with messages from the database.
- * Now includes error handling from form submissions.
- *
- * Key concepts:
- * 1. useLoaderData() HOOK: Accesses data returned from clientLoader
- * 2. useActionData() HOOK: Accesses result returned from clientAction
- * 3. ERROR DISPLAY: Shows validation or API errors to the user
- * 4. USER FEEDBACK: Informs users when something goes wrong
- */
 export default function ChatThread() {
   // Access the thread and messages data from the loader
   const { thread, messages } = useLoaderData();
