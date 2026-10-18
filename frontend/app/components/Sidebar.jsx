@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link, href, NavLink } from "react-router";
+import React from "react";
+import { href, Link, NavLink, useFetcher } from "react-router";
+
 
 function SidebarHeader() {
   return (
@@ -9,6 +10,86 @@ function SidebarHeader() {
         + New
       </Link>
     </div>
+  );
+}
+
+function ChatThreadItem({ thread }) {
+  const { id, title } = thread;
+  const fetcher = useFetcher();
+
+  // Check if this specific thread is being deleted
+  const isDeleting =
+    fetcher.state !== "idle" && fetcher.formData?.get("threadId") === id;
+
+  return (
+    <li className="chat-thread-item">
+      <div className="chat-thread-item-content">
+        <NavLink
+          to={href("/chat/:threadId", { threadId: id })}
+          className={({ isActive, isPending }) =>
+            [
+              "chat-thread-link",
+              isActive && "chat-thread-link-active",
+              isPending && "chat-thread-link-pending",
+            ]
+              .filter(Boolean)
+              .join(" ")
+          }
+        >
+          {title}
+        </NavLink>
+        <fetcher.Form method="post">
+          {/* Hidden inputs to identify the action and thread */}
+          <input type="hidden" name="intent" value="delete" />
+          <input type="hidden" name="threadId" value={id} />
+          <button
+            className="delete-thread-btn"
+            aria-label={`Delete thread: ${title}`}
+            title="Delete this conversation"
+            type="submit"
+            disabled={isDeleting}
+          >
+            {isDeleting ? "···" : "×"}
+          </button>
+        </fetcher.Form>
+      </div>
+    </li>
+  );
+}
+
+function ChatThreadsList({ threads = [] }) {
+  // LOCAL STATE: Managing search input value (controlled component)
+  const [searchValue, setSearchValue] = React.useState("");
+
+  // EVENT HANDLER: Update search value as user types
+  const handleSearchChange = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  const filteredThreads = threads.filter((thread) =>
+    thread.title.toLowerCase().includes(searchValue.toLowerCase()),
+  );
+
+  return (
+    <nav className="chat-threads-list" aria-label="Chat threads">
+      {/* Search input - CONTROLLED COMPONENT */}
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search conversations..."
+          value={searchValue}
+          onChange={handleSearchChange}
+        />
+      </div>
+
+      <ul>
+        {/* Render filtered threads - no callback prop needed */}
+        {filteredThreads.map((thread) => (
+          <ChatThreadItem key={thread.id} thread={thread} />
+        ))}
+      </ul>
+    </nav>
   );
 }
 
@@ -29,74 +110,13 @@ function SidebarFooter() {
   );
 }
 
-function ChatThreadItem({ id, href, title, deleteThread }) {
-  function handleDeleteClick(event) {
-    event.stopPropagation();
 
-    console.log(id, href, title, deleteThread);
-
-    deleteThread(id);
-  }
-
-  return (
-    <li className="chat-thread-item">
-      <div className="chat-thread-item-content">
-        <NavLink
-          to={href}
-          className={({ isActive, isPending }) =>
-            [
-              "chat-thread-link",
-              isActive && "chat-thread-link-active",
-              isPending && "chat-thread-link-pending",
-            ]
-              .filter(Boolean)
-              .join(" ")
-          }
-        >
-          {title}
-        </NavLink>
-        <button aria-label type="button" onClick={handleDeleteClick}>
-          X
-        </button>
-      </div>
-    </li>
-  );
-}
-
-function ChatThreadList({ threads = [], deleteThread }) {
-  const [searchValue, setSearchValue] = useState("");
-
-  const filteredThreads = threads.filter((thread) =>
-    thread.title.toLowerCase().includes(searchValue.toLowerCase()),
-  );
-
-  function handleSearchChange(event) {
-    setSearchValue(event.target.value);
-  }
-
-  return (
-    <nav className="chat-threads-list" aria-label="Chat threads">
-      <input onChange={handleSearchChange}></input>
-      <ul>
-        {filteredThreads.map((thread) => (
-          <ChatThreadItem
-            key={thread.id}
-            href={href("chat/:threadId", { threadId: thread.id })}
-            title={thread.title}
-            deleteThread={deleteThread}
-            id={thread.id}
-          />
-        ))}
-      </ul>
-    </nav>
-  );
-}
-
-export default function Sidebar({ threads = [], deleteThread }) {
+export default function Sidebar({ threads }) {
   return (
     <aside className="sidebar">
+      {/* Component composition - no callback prop drilling needed */}
       <SidebarHeader />
-      <ChatThreadList threads={threads} deleteThread={deleteThread} />
+      <ChatThreadsList threads={threads} />
       <SidebarFooter />
     </aside>
   );

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import React from "react";
+import { Form } from "react-router";
 
-function Message({ type, children }) {
+function Message({ type = "user", children }) {
   return (
     <div className={`message ${type}-message`}>
       <div className="message-content">{children}</div>
@@ -8,9 +9,11 @@ function Message({ type, children }) {
   );
 }
 
-export function ChatMessages({ messages = [] }) {
+
+function ChatMessages({ messages = [] }) {
   return (
     <div className="chat-messages">
+      {/* Using destructured messages with safe default! */}
       {messages.map((message) => (
         <Message key={message.id} type={message.type}>
           {message.content}
@@ -20,46 +23,25 @@ export function ChatMessages({ messages = [] }) {
   );
 }
 
-export function ChatInput({ onAddMessage }) {
-  const [isSubmitting, setisSubmitting] = useState(false);
 
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    const message = formData.get("message").trim();
-
-    if (!message) {
-      return;
-    }
-
-    onAddMessage(message);
-    event.target.reset();
-
-    setisSubmitting(true);
-
-    setTimeout(() => {
-      setisSubmitting(false);
-    }, 1000);
-  }
-
+function ChatInput() {
   return (
     <div className="chat-input-container">
-      <form className="chat-input-wrapper" onSubmit={handleSubmit}>
+      <Form method="post" className="chat-input-wrapper">
         <textarea
+          name="message"
           className="chat-input"
           placeholder="Type your message here..."
           rows="1"
-          name="message"
+          required
         />
-        <button
-          className="send-button"
-          type="submit"
-          disabled={isSubmitting ? "disabled" : ""}
-        >
-          {isSubmitting ? "Sending..." : "Send"}
+        <button className="send-button" type="submit">
+          Send
         </button>
-      </form>
+      </Form>
     </div>
   );
 }
+
+
+export { Message, ChatMessages, ChatInput };

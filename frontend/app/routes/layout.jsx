@@ -1,5 +1,62 @@
-import { Outlet, useLoaderData } from "react-router";
-import Sidebar from "../components/Sidebar";
+import { Outlet, useLoaderData, redirect } from "react-router";
+import Sidebar from "../components/Sidebar.jsx";
+
+const api_url = import.meta.env.VITE_API_URL;
+
+
+export async function clientLoader() {
+  const url = `${api_url}/api/threads`;
+  const response = await fetch(url);
+
+  // Check if the request was successful
+  if (!response.ok) {
+    throw new Error(`Failed to fetch threads: ${response.status}`);
+  }
+
+  // Parse the JSON response
+  const threads = await response.json();
+
+  return { threads };
+}
+
+
+export async function clientAction({ request }) {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  // Extract form data
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const threadId = formData.get("threadId");
+
+  // Handle delete intent
+  if (intent === "delete" && threadId) {
+    try {
+      // DELETE request to Supabase
+      // Messages are automatically deleted due to CASCADE
+      const response = await fetch(
+        `${supabaseUrl}/rest/v1/threads?id=eq.${threadId}`,
+        {
+          method: "DELETE",
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        return { error: `Failed to delete thread: ${response.status}` };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
+  return null;
+}
 
 export async function clientLoader() {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -26,16 +83,12 @@ export async function clientLoader() {
 }
 
 export default function Layout() {
-  const threads = useLoaderData();
-
-  function deleteThread(id) {
-    const updatedThreads = threads.filter((thread) => thread.id !== id);
-    setThreads(updatedThreads);
-  }
+  // Access threads data from the loader
+  const { threads } = useLoaderData();
 
   return (
     <div className="app-layout">
-      <Sidebar threads={threads} deleteThread={deleteThread} />
+      <Sidebar threads={threads} />
       <main className="main-content">
         <Outlet />
       </main>
