@@ -49,7 +49,6 @@ export async function clientLoader({ params }) {
     throw new Error(`Failed to fetch thread: ${threadResponse.status}`);
   }
 
-  // Supabase returns an array, even for single results
   const threadData = await threadResponse.json();
   const thread = threadData[0];
 
@@ -58,9 +57,6 @@ export async function clientLoader({ params }) {
     throw new Response("Thread not found", { status: 404 });
   }
 
-  // Fetch messages for this thread
-  // - thread_id=eq.{threadId}: Filter messages by thread
-  // - order=created_at.asc: Sort oldest to newest (chronological)
   const messagesUrl = `${supabaseUrl}/rest/v1/messages?thread_id=eq.${params.threadId}&select=*&order=created_at.asc`;
 
   const messagesResponse = await fetch(messagesUrl, {
