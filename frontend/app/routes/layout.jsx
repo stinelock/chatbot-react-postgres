@@ -58,6 +58,30 @@ export async function clientAction({ request }) {
   return null;
 }
 
+export async function clientLoader() {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+  const url =
+    `${supabaseUrl}/rest/v1/threads` + "?select=*&order=created_at.desc";
+
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  const res = await fetch(url, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Kunne ikke hente data");
+  }
+
+  const threadsData = await res.json();
+
+  return threadsData;
+}
+
 export default function Layout() {
   // Access threads data from the loader
   const { threads } = useLoaderData();

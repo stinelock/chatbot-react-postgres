@@ -96,7 +96,7 @@ function ChatThreadsList({ threads = [] }) {
 function SidebarFooter() {
   return (
     <div className="sidebar-footer">
-      <a href="/profile" className="user-profile">
+      <Link to="/profile" className="user-profile">
         <img
           src="https://ui-avatars.com/api/?name=Batman&background=0D0D0D&color=fff&size=40"
           alt="User avatar"
@@ -105,7 +105,7 @@ function SidebarFooter() {
           height={30}
         />
         <span className="user-name">Batman</span>
-      </a>
+      </Link>
     </div>
   );
 }
