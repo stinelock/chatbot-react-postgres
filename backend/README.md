@@ -126,7 +126,100 @@ Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
 
 ```json
 {
-  "error": "Kunne ikke hente chat data"
+  "error": "Could not fetch thread data"
+}
+```
+
+### `GET /api/threads/:id`
+
+Henter én chat-tråd ud fra dens UUID.
+
+**URL-parameter:**
+
+| Parameter | Type | Beskrivelse |
+| --- | --- | --- |
+| `id` | UUID | ID'et på den chat-tråd, der skal hentes |
+
+**Eksempel på request:**
+
+```bash
+curl http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111
+```
+
+**Eksempel på response:**
+
+```json
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "title": "How to learn programming?",
+  "created_at": "2025-10-01T10:00:00.000Z"
+}
+```
+
+Hvis chat-tråden ikke findes, returnerer endpointet HTTP 404:
+
+```json
+{
+  "error": "Could not find chat thread"
+}
+```
+
+Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
+
+```json
+{
+  "error": "Could not fetch thread data"
+}
+```
+
+### `GET /api/threads/:id/messages`
+
+Henter alle beskeder i en bestemt chat-tråd. Beskederne sorteres fra ældst til nyest efter `created_at`.
+
+**URL-parameter:**
+
+| Parameter | Type | Beskrivelse |
+| --- | --- | --- |
+| `id` | UUID | ID'et på den chat-tråd, hvis beskeder skal hentes |
+
+**Eksempel på request:**
+
+```bash
+curl http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages
+```
+
+**Eksempel på response:**
+
+```json
+[
+  {
+    "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "content": "How to learn programming?",
+    "type": "user",
+    "thread_id": "11111111-1111-1111-1111-111111111111",
+    "created_at": "2025-10-01T10:00:00.000Z"
+  },
+  {
+    "id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+    "content": "Great question! Learning programming is an exciting journey.",
+    "type": "bot",
+    "thread_id": "11111111-1111-1111-1111-111111111111",
+    "created_at": "2025-10-01T10:00:15.000Z"
+  }
+]
+```
+
+Hvis chat-tråden ikke har nogen beskeder, returnerer endpointet et tomt array med HTTP 200:
+
+```json
+[]
+```
+
+Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
+
+```json
+{
+  "error": "Could not find thread messages"
 }
 ```
 
@@ -145,6 +238,8 @@ Kald derefter begge endpoints fra en anden terminal:
 ```bash
 curl -i http://localhost:3000/
 curl -i http://localhost:3000/api/threads
+curl -i http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111
+curl -i http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages
 ```
 
 ### Test i browseren
@@ -153,6 +248,8 @@ curl -i http://localhost:3000/api/threads
 
 - `http://localhost:3000/`
 - `http://localhost:3000/api/threads`
+- `http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111`
+- `http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages`
 
 Browseren skal vise JSON-svaret direkte. På `/api/threads` skal resultatet være en liste over tråde fra databasen.
 
@@ -163,6 +260,10 @@ Browseren skal vise JSON-svaret direkte. På `/api/threads` skal resultatet vær
 - `GET /api/threads` svarer med HTTP 200 og et JSON-array.
 - Hvert element i arrayet har felterne `id`, `title` og `created_at`.
 - Trådene er sorteret fra nyest til ældst efter `created_at`.
+- `GET /api/threads/:id` svarer med HTTP 200 og objektet for den valgte chat-tråd.
+- `GET /api/threads/:id` svarer med HTTP 404, hvis chat-tråden ikke findes.
+- `GET /api/threads/:id/messages` svarer med HTTP 200 og et JSON-array med chat-trådens beskeder.
+- Beskederne fra `GET /api/threads/:id/messages` er sorteret fra ældst til nyest efter `created_at`.
 - Hvis `DATABASE_URL` mangler, stopper serveren med en tydelig fejl om, at `DATABASE_URL` skal sættes.
 - Hvis databaseforespørgslen fejler, svarer `/api/threads` med HTTP 500 og en JSON-fejlbesked.
 

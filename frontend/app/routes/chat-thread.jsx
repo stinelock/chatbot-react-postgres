@@ -7,7 +7,6 @@ import {
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 
-
 export function ErrorBoundary() {
   const error = useRouteError();
 
@@ -31,47 +30,27 @@ export function ErrorBoundary() {
   );
 }
 
-
 export async function clientLoader({ params }) {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const api_url = import.meta.env.VITE_API_URL;
 
-  const threadUrl = `${supabaseUrl}/rest/v1/threads?id=eq.${params.threadId}&select=*`;
-
-  const threadResponse = await fetch(threadUrl, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-    },
-  });
+  const threadUrl = `${api_url}/api/threads/${params.threadId}`;
+  const threadResponse = await fetch(threadUrl);
 
   if (!threadResponse.ok) {
     throw new Error(`Failed to fetch thread: ${threadResponse.status}`);
   }
+  const thread = await threadResponse.json();
 
-  // Supabase returns an array, even for single results
-  const threadData = await threadResponse.json();
-  const thread = threadData[0];
-
-  // If thread not found, throw error (will be caught by ErrorBoundary)
   if (!thread) {
+    console.error(`Thread with ID ${params.threadId} not found.`);
     throw new Response("Thread not found", { status: 404 });
   }
 
-  // Fetch messages for this thread
-  // - thread_id=eq.{threadId}: Filter messages by thread
-  // - order=created_at.asc: Sort oldest to newest (chronological)
-  const messagesUrl = `${supabaseUrl}/rest/v1/messages?thread_id=eq.${params.threadId}&select=*&order=created_at.asc`;
-
-  const messagesResponse = await fetch(messagesUrl, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-    },
-  });
+  const messagesUrl = `${api_url}/api/threads/${params.threadId}/messages`;
+  const messagesResponse = await fetch(messagesUrl);
 
   if (!messagesResponse.ok) {
-    throw new Error(`Failed to fetch messages: ${messagesResponse.status}`);
+    throw new Response(`Failed to fetch messages: ${messagesResponse.status}`);
   }
 
   const messages = await messagesResponse.json();
@@ -81,7 +60,6 @@ export async function clientLoader({ params }) {
     messages,
   };
 }
-
 
 export async function clientAction({ params, request }) {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
