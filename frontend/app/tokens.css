@@ -1,0 +1,78 @@
+/* CSS Variables */
+:root {
+  --white-100: #ffffff;
+  --white-200: #f9f9f9;
+  --white-300: #f0f0f0;
+  --white-400: #f1f3f5;
+
+  --grey-100: #e5e5e5;
+  --grey-200: #d1d5db;
+  --grey-300: #9ca3af;
+  --grey-400: #6b7280;
+  --grey-500: #4b5563;
+  --grey-600: #374151;
+
+  --black-100: rgba(107, 114, 128, 0.1);
+  --black-200: #0d0d0d;
+
+  --red-50:rgba(239, 68, 68, 0.1);
+  --red-100: #fee2e2;
+  --red-200: #fcc;
+  --red-300: #ef4444;
+  --red-400: #ff0000;
+  --red-500: #c00;
+
+  --bg-primary: var(--white-100);
+  --bg-secondary: var(--white-200);
+  --bg-hover: var(--white-300);
+  --bg-message-user: var(--white-400);
+  --bg-message-bot: transparent;
+  --bg-button-primary: var(--grey-500);
+  --bg-button-primary-hover: var(--grey-600);
+  --bg-button-secondary: var(--white-200);
+  --bg-button-secondary-hover: var(--grey-100);
+  --bg-button-disabled: var(--grey-200);
+  --bg-error: var(--red-100);
+  --bg-delete: var(--red-50);
+
+  --text-primary: var(--black-200);
+  --text-muted: var(--grey-300);
+  --text-button: var(--white-100);
+  --text-error: var(--red-500);
+  --text-delete: var(--red-300);
+
+  --border-light: var(--grey-100);
+  --border-medium: var(--grey-200);
+  --border-focus: var(--grey-400);
+  --border-error: var(--red-300);
+
+  --shadow-focus: var(--black-100);
+}
+
+[data-theme="dark"] {
+  --bg-primary: var(--grey-600);
+  --bg-secondary: var(--grey-500);
+  --bg-hover: var(--grey-400);
+  --bg-message-user: var(--grey-600);
+  --bg-message-bot: transparent;
+  --bg-button-primary: var(--grey-400);
+  --bg-button-primary-hover: var(--grey-300);
+  --bg-button-secondary: var(--grey-500);
+  --bg-button-secondary-hover: var(--grey-400);
+  --bg-button-disabled: var(--grey-700);
+  --bg-error: var(--red-300);
+  --bg-delete: var(--red-500);
+
+  --text-primary: var(--white-100);
+  --text-muted: var(--grey-400);
+  --text-button: var(--white-100);
+  --text-error: var(--red-100);
+  --text-delete: var(--red-200);
+
+  --border-light: var(--grey-400);
+  --border-medium: var(--grey-400);
+  --border-focus: var(--grey-300);
+  --border-error: var(--red-300);
+
+  --shadow-focus: rgba(255, 255, 255, 0.1);
+}

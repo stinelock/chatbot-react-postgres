@@ -77,11 +77,11 @@ export default function Home() {
   };
 
   return (
-    <main className="chat-container">
+    <section className="chat-container">
       {/* Passing messages state as props - DATA FLOW! */}
       <ChatMessages messages={messages} />
       {/* Passing callback function as props - CALLBACK PROPS! */}
       <ChatInput onAddMessage={addMessage} />
-    </main>
+    </section>
   );
 }

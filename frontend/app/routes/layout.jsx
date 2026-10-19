@@ -1,5 +1,6 @@
 import { Outlet, useLoaderData, redirect } from "react-router";
 import Sidebar from "../components/Sidebar.jsx";
+import { useState } from "react";
 
 const api_url = import.meta.env.VITE_API_URL;
 
@@ -62,9 +63,23 @@ export default function Layout() {
   // Access threads data from the loader
   const { threads } = useLoaderData();
 
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") {
+      return "light";
+    }
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  });
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
   return (
-    <div className="app-layout">
-      <Sidebar threads={threads} />
+    <div className="app-layout" data-theme={theme}>
+      <Sidebar threads={threads} theme={theme} onToggleTheme={toggleTheme} />
       <main className="main-content">
         <Outlet />
       </main>

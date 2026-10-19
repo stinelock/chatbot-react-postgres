@@ -1,25 +1,3 @@
-/* CSS Variables */
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9f9f9;
-  --bg-hover: #f0f0f0;
-  --bg-message-user: #f1f3f5;
-  --bg-message-bot: transparent;
-  --bg-button-primary: #4b5563;
-  --bg-button-primary-hover: #374151;
-  --bg-button-disabled: #d1d5db;
-
-  --text-primary: #0d0d0d;
-  --text-muted: #9ca3af;
-  --text-button: #ffffff;
-
-  --border-light: #e5e5e5;
-  --border-medium: #d1d5db;
-  --border-focus: #6b7280;
-
-  --shadow-focus: rgba(107, 114, 128, 0.1);
-}
-
 /* Reset and base styles */
 * {
   margin: 0;
@@ -108,7 +86,7 @@ body {
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   outline: none;
   font-family: inherit;
@@ -220,8 +198,8 @@ body {
 
 /* Delete button hover state */
 .delete-thread-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  background: var(--bg-delete);
+  color: var(--text-delete);
 }
 
 /* Focus styles for accessibility */
@@ -255,13 +233,12 @@ body {
   visibility: visible;
 }
 
-.chat-thread-item-content button:hover {
-  color: red;
-  background: rgb(255, 210, 210);
-}
-
 /* Sidebar footer */
 .sidebar-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   border-top: 1px solid var(--border-light);
 }
 .user-profile {
@@ -287,6 +264,22 @@ body {
   color: var(--text-primary);
 }
 
+.theme-toggle-btn {
+  background: var(--bg-button-secondary);
+  border: var(--border-medium) solid 1px;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  width: 36px;
+  height: 36px;
+  margin-right: 0.5rem;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--bg-button-secondary-hover);
+}
+
 /* Chat interface styles */
 .chat-container {
   display: flex;
@@ -297,6 +290,7 @@ body {
 }
 
 .chat-thread-header {
+  background: var(--bg-primary);
   text-align: center;
   padding: 3rem 2rem;
   text-align: center;
@@ -304,6 +298,7 @@ body {
 }
 
 .chat-messages {
+  background: var(--bg-primary);
   flex: 1;
   padding: 2rem 1rem;
   display: flex;
@@ -408,11 +403,11 @@ body {
 
 /* Error message */
 .error-message {
-  background: #fee;
-  color: #c00;
+  background: var(--bg-error);
+  color: var(--text-error);
   padding: 0.75rem 1rem;
   margin: 1rem;
   border-radius: 8px;
-  border: 1px solid #fcc;
+  border: 1px solid var(--border-error);
   font-size: 0.875rem;
 }

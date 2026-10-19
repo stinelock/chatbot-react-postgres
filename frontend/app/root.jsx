@@ -8,6 +8,7 @@ import {
 } from "react-router";
 
 // Styles imported here will be bundled into the app automatically
+import "./tokens.css";
 import "./app.css";
 
 // Add links to external stylesheets, fonts, etc. here
