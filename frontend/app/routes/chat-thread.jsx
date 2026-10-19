@@ -7,7 +7,6 @@ import {
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 
-
 export function ErrorBoundary() {
   const error = useRouteError();
 
@@ -31,19 +30,12 @@ export function ErrorBoundary() {
   );
 }
 
-
 export async function clientLoader({ params }) {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const api_url = import.meta.env.VITE_API_URL;
 
-  const threadUrl = `${supabaseUrl}/rest/v1/threads?id=eq.${params.threadId}&select=*`;
+  const threadUrl = `${api_url}/api/threads/${params.threadId}`;
 
-  const threadResponse = await fetch(threadUrl, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-    },
-  });
+  const threadResponse = await fetch(threadUrl);
 
   if (!threadResponse.ok) {
     throw new Error(`Failed to fetch thread: ${threadResponse.status}`);
@@ -57,14 +49,9 @@ export async function clientLoader({ params }) {
     throw new Response("Thread not found", { status: 404 });
   }
 
-  const messagesUrl = `${supabaseUrl}/rest/v1/messages?thread_id=eq.${params.threadId}&select=*&order=created_at.asc`;
+  const messagesUrl = `${api_url}/api/threads/${params.threadId}/messages`;
 
-  const messagesResponse = await fetch(messagesUrl, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-    },
-  });
+  const messagesResponse = await fetch(messagesUrl);
 
   if (!messagesResponse.ok) {
     throw new Error(`Failed to fetch messages: ${messagesResponse.status}`);
@@ -77,7 +64,6 @@ export async function clientLoader({ params }) {
     messages,
   };
 }
-
 
 export async function clientAction({ params, request }) {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
