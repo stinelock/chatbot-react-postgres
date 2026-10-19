@@ -86,7 +86,7 @@ body {
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   outline: none;
   font-family: inherit;
@@ -198,7 +198,7 @@ body {
 
 /* Delete button hover state */
 .delete-thread-btn:hover {
-  background:  var(--bg-delete);
+  background: var(--bg-delete);
   color: var(--text-delete);
 }
 
@@ -235,6 +235,10 @@ body {
 
 /* Sidebar footer */
 .sidebar-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   border-top: 1px solid var(--border-light);
 }
 .user-profile {
@@ -260,6 +264,22 @@ body {
   color: var(--text-primary);
 }
 
+.theme-toggle-btn {
+  background: var(--bg-button-secondary);
+  border: var(--border-medium) solid 1px;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  width: 36px;
+  height: 36px;
+  margin-right: 0.5rem;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--bg-button-secondary-hover);
+}
+
 /* Chat interface styles */
 .chat-container {
   display: flex;
@@ -277,6 +297,7 @@ body {
 }
 
 .chat-messages {
+  background: var(--bg-primary);
   flex: 1;
   padding: 2rem 1rem;
   display: flex;
