@@ -1,5 +1,7 @@
 /* CSS Variables */
 :root {
+  /*---------------------------COLORS-----------------------------*/
+  /*Primitive variable*/
   --white-100: #ffffff;
   --white-200: #f9f9f9;
   --white-300: #f0f0f0;
@@ -15,12 +17,14 @@
   --black-100: rgba(107, 114, 128, 0.1);
   --black-200: #0d0d0d;
 
-  --red-50:rgba(239, 68, 68, 0.1);
+  --red-50: rgba(239, 68, 68, 0.1);
   --red-100: #fee2e2;
   --red-200: #fcc;
   --red-300: #ef4444;
   --red-400: #ff0000;
   --red-500: #c00;
+
+  /*Semantisk variable*/
 
   --bg-primary: var(--white-100);
   --bg-secondary: var(--white-200);
@@ -47,7 +51,27 @@
   --border-error: var(--red-300);
 
   --shadow-focus: var(--black-100);
+
+  /*---------------------------BORDERS-----------------------------*/
+  /*Primitive variable*/
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-18: 18px;
+  --radius-50: 50%;
+
+   /*Semantiske variable*/
+    --border-radius-small: var(--radius-4);
+    --border-radius-medium: var(--radius-6);
+    --border-radius-large: var(--radius-12);
+    --border-radius-message: var(--radius-18);
+    --border-radius-message-corner: var(--radius-4);
+    --border-radius-avatar: var(--radius-50);
+    --border-radius-error: var(--radius-8);
 }
+
+/*---------------------------DARK THEME-----------------------------*/
 
 [data-theme="dark"] {
   --bg-primary: var(--grey-600);
