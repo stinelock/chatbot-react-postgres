@@ -290,6 +290,7 @@ body {
 }
 
 .chat-thread-header {
+  background: var(--bg-primary);
   text-align: center;
   padding: 3rem 2rem;
   text-align: center;
