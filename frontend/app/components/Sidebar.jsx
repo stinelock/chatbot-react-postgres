@@ -93,7 +93,7 @@ function ChatThreadsList({ threads = [] }) {
   );
 }
 
-function SidebarFooter() {
+function SidebarFooter({ theme, onToggleTheme }) {
   return (
     <div className="sidebar-footer">
       <Link to="/profile" className="user-profile">
@@ -106,18 +106,26 @@ function SidebarFooter() {
         />
         <span className="user-name">Batman</span>
       </Link>
+      <button
+        className="theme-toggle-btn"
+        aria-label="Toggle theme"
+        title="Toggle light/dark theme"
+        onClick={onToggleTheme}
+      >
+        {theme === "light" ? "🌞" : "🌙"}
+        </button>
     </div>
   );
 }
 
 
-export default function Sidebar({ threads }) {
+export default function Sidebar({ threads, onToggleTheme, theme }) {
   return (
     <aside className="sidebar">
       {/* Component composition - no callback prop drilling needed */}
       <SidebarHeader />
       <ChatThreadsList threads={threads} />
-      <SidebarFooter />
+      <SidebarFooter theme={theme} onToggleTheme={onToggleTheme} />
     </aside>
   );
 }
