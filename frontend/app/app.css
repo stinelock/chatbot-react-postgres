@@ -282,6 +282,7 @@ body {
 
 /* Chat interface styles */
 .chat-container {
+  background: var(--bg-primary);
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -290,7 +291,6 @@ body {
 }
 
 .chat-thread-header {
-  background: var(--bg-primary);
   text-align: center;
   padding: 3rem 2rem;
   text-align: center;
@@ -298,7 +298,6 @@ body {
 }
 
 .chat-messages {
-  background: var(--bg-primary);
   flex: 1;
   padding: 2rem 1rem;
   display: flex;
