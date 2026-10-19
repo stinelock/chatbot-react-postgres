@@ -1,23 +1,50 @@
 /* CSS Variables */
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9f9f9;
-  --bg-hover: #f0f0f0;
-  --bg-message-user: #f1f3f5;
+  --white-100: #ffffff;
+  --white-200: #f9f9f9;
+  --white-300: #f0f0f0;
+  --white-400: #f1f3f5;
+
+  --grey-100: #e5e5e5;
+  --grey-200: #d1d5db;
+  --grey-300: #9ca3af;
+  --grey-400: #6b7280;
+  --grey-500: #4b5563;
+  --grey-600: #374151;
+
+  --black-100: rgba(107, 114, 128, 0.1);
+  --black-200: #0d0d0d;
+
+  --red-50:rgba(239, 68, 68, 0.1);
+  --red-100: #fee2e2;
+  --red-200: #fcc;
+  --red-300: #ef4444;
+  --red-400: #ff0000;
+  --red-500: #c00;
+
+  --bg-primary: var(--white-100);
+  --bg-secondary: var(--white-200);
+  --bg-hover: var(--white-300);
+  --bg-message-user: var(--white-400);
   --bg-message-bot: transparent;
-  --bg-button-primary: #4b5563;
-  --bg-button-primary-hover: #374151;
-  --bg-button-disabled: #d1d5db;
+  --bg-button-primary: var(--grey-500);
+  --bg-button-primary-hover: var(--grey-600);
+  --bg-button-disabled: var(--grey-200);
+  --bg-error: var(--red-100);
+  --bg-delete: var(--red-50);
 
-  --text-primary: #0d0d0d;
-  --text-muted: #9ca3af;
-  --text-button: #ffffff;
+  --text-primary: var(--black-200);
+  --text-muted: var(--grey-300);
+  --text-button: var(--white-100);
+  --text-error: var(--red-500);
+  --text-delete: var(--red-300);
 
-  --border-light: #e5e5e5;
-  --border-medium: #d1d5db;
-  --border-focus: #6b7280;
+  --border-light: var(--grey-100);
+  --border-medium: var(--grey-200);
+  --border-focus: var(--grey-400);
+  --border-error: var(--red-300);
 
-  --shadow-focus: rgba(107, 114, 128, 0.1);
+  --shadow-focus: var(--black-100);
 }
 
 /* Reset and base styles */
@@ -220,8 +247,8 @@ body {
 
 /* Delete button hover state */
 .delete-thread-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  background:  var(--bg-delete);
+  color: var(--text-delete);
 }
 
 /* Focus styles for accessibility */
@@ -253,11 +280,6 @@ body {
 
 .chat-thread-item-content:hover button {
   visibility: visible;
-}
-
-.chat-thread-item-content button:hover {
-  color: red;
-  background: rgb(255, 210, 210);
 }
 
 /* Sidebar footer */
@@ -408,11 +430,11 @@ body {
 
 /* Error message */
 .error-message {
-  background: #fee;
-  color: #c00;
+  background: var(--bg-error);
+  color: var(--text-error);
   padding: 0.75rem 1rem;
   margin: 1rem;
   border-radius: 8px;
-  border: 1px solid #fcc;
+  border: 1px solid var(--border-error);
   font-size: 0.875rem;
 }
