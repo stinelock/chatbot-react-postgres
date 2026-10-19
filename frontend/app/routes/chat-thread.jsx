@@ -33,28 +33,20 @@ export function ErrorBoundary() {
 export async function clientLoader({ params }) {
   const api_url = import.meta.env.VITE_API_URL;
 
-  console.log(`Fetching thread and messages for thread ID: ${params.threadId}`);
-
   const threadUrl = `${api_url}/api/threads/${params.threadId}`;
-
   const threadResponse = await fetch(threadUrl);
 
   if (!threadResponse.ok) {
     throw new Error(`Failed to fetch thread: ${threadResponse.status}`);
   }
-
   const thread = await threadResponse.json();
 
-  console.log(`Fetched thread:`, thread);
-
-  // If thread not found, throw error (will be caught by ErrorBoundary)
   if (!thread) {
     console.error(`Thread with ID ${params.threadId} not found.`);
     throw new Response("Thread not found", { status: 404 });
   }
 
   const messagesUrl = `${api_url}/api/threads/${params.threadId}/messages`;
-
   const messagesResponse = await fetch(messagesUrl);
 
   if (!messagesResponse.ok) {
