@@ -5,8 +5,11 @@ import sql from "./db.js";
 const app = express();
 const port = process.env.PORT;
 
+//MIDDLEWARE
 app.use(cors());
+app.use(express.json()); //Sikre at et postrequest sendes som JSON i stedet for bytes - eller er req.body undefined
 
+//ROUTES
 app.get("/", (req, res) => {
 	res.json("Velkommen til!");
 });
@@ -57,11 +60,50 @@ app.get("/api/threads/:id/messages", async (req, res) => {
         ORDER BY created_at ASC`;
 
 		return res.json(messages);
-
 	} catch (error) {
 		console.error("Failed to fetch messages:", error);
 		res.status(500).json({
 			error: "Could not find thread messages",
+		});
+	}
+});
+
+app.post("/api/threads/:id/messages", async (req, res) => {
+	try {
+		const threadId = req.params.id;
+		const { content, type } = req.body ?? {};
+
+		if (!content || !type) {
+			return res.status(400).json({
+				error: "Missing required fields: content and type are required",
+			});
+		}
+
+		const trimmedContent = content.trim();
+
+		if (type !== "user" && type !== "bot") {
+			return res
+				.status(400)
+				.json({ error: "Invalid type: must be 'user' or 'bot'" });
+		}
+
+        if (!trimmedContent){
+            return res.status(400).json({
+                error: "Message content cannot be empty"
+            })
+        }
+
+		const messages = await sql`
+        INSERT INTO messages (thread_id, content, type)
+        VALUES (${threadId}, ${trimmedContent}, ${type})
+        RETURNING * 
+        `;
+
+        return res.status(201).json(messages[0])
+	} catch (error) {
+		console.error("Failed to fetch messages:", error);
+        res.status(500).json({
+			error: "Could not create message",
 		});
 	}
 });

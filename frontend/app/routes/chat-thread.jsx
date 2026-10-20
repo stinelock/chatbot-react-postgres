@@ -30,9 +30,9 @@ export function ErrorBoundary() {
   );
 }
 
-export async function clientLoader({ params }) {
-  const api_url = import.meta.env.VITE_API_URL;
+const api_url = import.meta.env.VITE_API_URL;
 
+export async function clientLoader({ params }) {
   const threadUrl = `${api_url}/api/threads/${params.threadId}`;
   const threadResponse = await fetch(threadUrl);
 
@@ -62,8 +62,6 @@ export async function clientLoader({ params }) {
 }
 
 export async function clientAction({ params, request }) {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
   // Extract form data from the request
   const formData = await request.formData();
@@ -76,22 +74,27 @@ export async function clientAction({ params, request }) {
 
   // Create the message object
   const newMessage = {
-    thread_id: params.threadId,
     type: "user",
     content: content.trim(),
   };
 
-  // POST to Supabase to create the message
+  // POST to API to create the message in Supabase
   try {
-    const response = await fetch(`${supabaseUrl}/rest/v1/messages`, {
-      method: "POST",
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${api_url}/api/threads/${params.threadId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newMessage),
       },
-      body: JSON.stringify(newMessage),
-    });
+    );
+
+    if (response.status === 400) {
+      const errorData = await response.json();
+      return { error: errorData.error || "Invalid request" };
+    }
 
     if (!response.ok) {
       return { error: `Failed to create message: ${response.status}` };

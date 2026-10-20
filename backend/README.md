@@ -223,6 +223,85 @@ Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
 }
 ```
 
+### `POST /api/threads/:id/messages`
+
+Opretter en ny besked i den chat-tråd, der identificeres af URL-parameteren. Beskeden gemmes i `messages`-tabellen og returneres i response-bodyen.
+
+**URL-parameter:**
+
+| Parameter | Type | Beskrivelse |
+| --- | --- | --- |
+| `id` | UUID | ID'et på den chat-tråd, som beskeden skal tilføjes til |
+
+**Request body:**
+
+Requesten skal sendes som JSON med headeren `Content-Type: application/json`:
+
+```json
+{
+  "type": "user",
+  "content": "Hvordan fungerer React Router?"
+}
+```
+
+Begge felter er påkrævede:
+
+| Felt | Type | Beskrivelse og begrænsninger |
+| --- | --- | --- |
+| `type` | String | Angiver, om beskeden kommer fra brugeren eller chatbotten. Den skal være enten `"user"` eller `"bot"`. |
+| `content` | String | Selve beskedens tekst. Den må ikke være tom eller kun indeholde whitespace. Omkringliggende whitespace fjernes, før beskeden gemmes. |
+
+**Eksempel på request:**
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "user",
+    "content": "Hvordan fungerer React Router?"
+  }'
+```
+
+**Succesrespons: `201 Created`**
+
+Ved succes returneres den oprettede besked med alle dens felter:
+
+```json
+{
+  "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+  "thread_id": "11111111-1111-1111-1111-111111111111",
+  "type": "user",
+  "content": "Hvordan fungerer React Router?",
+  "created_at": "2025-10-01T10:05:00.000Z"
+}
+```
+
+**Fejlrespons: `400 Bad Request`**
+
+Hvis `content` eller `type` mangler, returneres:
+
+```json
+{
+  "error": "Missing required fields: content and type are required"
+}
+```
+
+Hvis `type` ikke er `"user"` eller `"bot"`, returneres:
+
+```json
+{
+  "error": "Invalid type: must be 'user' or 'bot'"
+}
+```
+
+Hvis `content` er tom eller kun består af whitespace, returneres:
+
+```json
+{
+  "error": "Message content cannot be empty"
+}
+```
+
 ## Testing section
 
 ### Test med curl
@@ -242,9 +321,41 @@ curl -i http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111
 curl -i http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages
 ```
 
+Opret en besked med `POST` og et JSON-body:
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages \
+  -H "Content-Type: application/json" \
+  -d '{"type":"user","content":"Dette er en testbesked"}'
+```
+
+Test validering med manglende felter:
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages \
+  -H "Content-Type: application/json" \
+  -d '{"type":"user"}'
+```
+
+Test validering med en ugyldig type:
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages \
+  -H "Content-Type: application/json" \
+  -d '{"type":"admin","content":"Denne type er ikke tilladt"}'
+```
+
+Test validering med tomt content:
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages \
+  -H "Content-Type: application/json" \
+  -d '{"type":"user","content":"   "}'
+```
+
 ### Test i browseren
 
-Åbn følgende adresser i en browser:
+GET-endpoints kan testes direkte ved at åbne følgende adresser i en browser:
 
 - `http://localhost:3000/`
 - `http://localhost:3000/api/threads`
@@ -252,6 +363,8 @@ curl -i http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/m
 - `http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111/messages`
 
 Browseren skal vise JSON-svaret direkte. På `/api/threads` skal resultatet være en liste over tråde fra databasen.
+
+En almindelig URL i browserens adresselinje sender kun en `GET`-request. Derfor kan `POST /api/threads/:id/messages` ikke testes på denne måde, fordi den kræver både HTTP-metoden `POST` og et JSON-request-body. Brug i stedet `curl`, Postman eller Thunder Client i Visual Studio Code.
 
 ### Forventede resultater
 
@@ -264,6 +377,10 @@ Browseren skal vise JSON-svaret direkte. På `/api/threads` skal resultatet vær
 - `GET /api/threads/:id` svarer med HTTP 404, hvis chat-tråden ikke findes.
 - `GET /api/threads/:id/messages` svarer med HTTP 200 og et JSON-array med chat-trådens beskeder.
 - Beskederne fra `GET /api/threads/:id/messages` er sorteret fra ældst til nyest efter `created_at`.
+- `POST /api/threads/:id/messages` svarer med HTTP 201 og den oprettede besked.
+- `POST /api/threads/:id/messages` svarer med HTTP 400, hvis `content` eller `type` mangler.
+- `POST /api/threads/:id/messages` svarer med HTTP 400, hvis `type` ikke er `user` eller `bot`.
+- `POST /api/threads/:id/messages` svarer med HTTP 400, hvis `content` er tomt eller kun indeholder whitespace.
 - Hvis `DATABASE_URL` mangler, stopper serveren med en tydelig fejl om, at `DATABASE_URL` skal sættes.
 - Hvis databaseforespørgslen fejler, svarer `/api/threads` med HTTP 500 og en JSON-fejlbesked.
 
