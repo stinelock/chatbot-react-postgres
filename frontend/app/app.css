@@ -32,6 +32,7 @@ body {
 }
 
 .main-content {
+  background-color: var(--bg-primary);
   flex: 1;
   overflow-y: auto;
 }
