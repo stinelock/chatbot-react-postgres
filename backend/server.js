@@ -116,6 +116,14 @@ app.post("/api/threads/:id/messages", async (req, res) => {
 			return m;
 		});
 
+		const structure = {
+			role: "system",
+			content:
+				"you are polite and friendly, but only answers factually. you answer questions based on the context provided by the user. if you don't know the answer, you say 'I don't know'. Be educational and helpful, but do not make up answers. If the user asks you to make up an answer, politely decline and say that you cannot do that.",
+		};
+
+        groqMessages.unshift(structure);
+
 		const api_key = process.env.GROQ_API_KEY;
 		let data;
 
@@ -161,7 +169,7 @@ app.post("/api/threads/:id/messages", async (req, res) => {
         INSERT INTO messages (thread_id, type, content)
         VALUES (${threadId}, ${botMessage.role === "user" ? "user" : "bot"}, ${botMessage.content})`;
 
-        return res.status(201).json({userMessage, botMessage});
+		return res.status(201).json({ userMessage, botMessage });
 	} catch (error) {
 		console.error("Failed to fetch messages:", error);
 		res.status(500).json({
