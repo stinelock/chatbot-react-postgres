@@ -302,6 +302,50 @@ Hvis `content` er tom eller kun består af whitespace, returneres:
 }
 ```
 
+### `DELETE /api/threads/:id`
+
+Sletter den chat-tråd, der identificeres af URL-parameteren. Når en tråd slettes, slettes alle tilhørende beskeder også automatisk på grund af `ON DELETE CASCADE`-relationen mellem `threads` og `messages`.
+
+**Advarsel:** Sletningen er permanent og kan ikke fortrydes. Tråden og alle dens beskeder fjernes permanent fra databasen. Kontrollér derfor altid `id`-værdien, før endpointet kaldes.
+
+**URL-parameter:**
+
+| Parameter | Type | Beskrivelse |
+| --- | --- | --- |
+| `id` | UUID | ID'et på den chat-tråd, der skal slettes |
+
+**Eksempel på request:**
+
+```bash
+curl -i -X DELETE http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111
+```
+
+**Succesrespons: `200 OK`**
+
+Hvis tråden findes og slettes, returneres:
+
+```json
+{
+  "message": "Thread with title \"Lær React Router\" has been deleted"
+}
+```
+
+**Fejlrespons: `404 Not Found`**
+
+Hvis der ikke findes en tråd med det angivne ID, returneres:
+
+```json
+{
+  "error": "The thread you wish to delete does not exist"
+}
+```
+
+**Eksempel på request med et ID, der ikke findes:**
+
+```bash
+curl -i -X DELETE http://localhost:3000/api/threads/99999999-9999-9999-9999-999999999999
+```
+
 ## Testing section
 
 ### Test med curl
