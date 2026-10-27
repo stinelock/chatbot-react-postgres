@@ -145,7 +145,12 @@ app.post("/api/threads", async (req, res) => {
 		const { title, content } = req.body ?? {};
 		const TEST_USER_ID = "b94614de-f124-43de-b36f-81b44e09b024"; // Replace with the actual user ID later when implementing authentication
 
-        console.log("Received request to create thread with title:", title, "and content:", content);
+		console.log(
+			"Received request to create thread with title:",
+			title,
+			"and content:",
+			content,
+		);
 
 		const trimmedTitle = title?.trim();
 		const trimmedContent = content?.trim();
@@ -177,6 +182,39 @@ app.post("/api/threads", async (req, res) => {
 		console.error("Failed to create thread:", error);
 		return res.status(500).json({
 			error: "Could not create thread",
+		});
+	}
+});
+
+app.patch("/api/threads/:id", async (req, res) => {
+	try {
+		const threadId = req.params.id;
+		const { title } = req.body ?? {};
+
+		if (!title || !title.trim()) {
+			return res.status(400).json({
+				error: "Missing required field: title is required",
+			});
+		}
+
+		const updatedThread = await sql`
+        UPDATE threads
+        SET title = ${title}
+        WHERE id = ${threadId}
+        RETURNING id, title, created_at
+        `;
+
+		if (updatedThread.length === 0) {
+			return res.status(404).json({
+				error: "Could not find thread to update",
+			});
+		}
+
+		return res.status(200).json(updatedThread[0]);
+	} catch (error) {
+		console.error("Failed to update thread:", error);
+		return res.status(500).json({
+			error: "Could not update thread",
 		});
 	}
 });
