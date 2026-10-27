@@ -35,10 +35,25 @@ export default function ChatThreadEdit() {
   const { thread } = useRouteLoaderData("routes/chat-thread");
 
   return (
-    <Form method="POST">
-      <input name="title" defaultValue={thread.title}></input>
-      <button type="submit">Save</button>
-      <Link to="">Cancel</Link>
-    </Form>
+    <div className="edit.title.overlay">
+      <Form method="POST" className="edit-title-form">
+        <div className="form-field">
+          <label htmlFor="title">Edit Thread Title</label>
+          <input
+            name="title"
+            className="title-input"
+            defaultValue={thread.title}
+          ></input>
+        </div>
+        <div className="button-group">
+          <button type="submit" className="save-button">
+            Save
+          </button>
+          <Link to=".." className="cancel-button">
+            Cancel
+          </Link>{" "}
+        </div>
+      </Form>
+    </div>
   );
 }

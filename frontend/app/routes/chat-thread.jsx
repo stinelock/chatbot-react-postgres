@@ -120,7 +120,9 @@ export default function ChatThread() {
       <Outlet />
       <div className="chat-thread-header">
         <h2>{thread.title}</h2>
-        <Link to="edit">Edit</Link>
+        <Link to="edit" className="thread-title-edit-link">
+          Edit
+        </Link>
       </div>
       <ChatMessages messages={messages} />
       <ChatInput />
