@@ -4,6 +4,7 @@ import {
   Link,
   useRouteError,
   href,
+  useNavigation,
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 import { Outlet } from "react-router";
@@ -63,7 +64,6 @@ export async function clientLoader({ params }) {
 }
 
 export async function clientAction({ params, request }) {
-
   // Extract form data from the request
   const formData = await request.formData();
   const content = formData.get("message");
@@ -112,8 +112,28 @@ export default function ChatThread() {
   // Access the thread and messages data from the loader
   const { thread, messages } = useLoaderData();
 
+  // Access the navigation state to determine if a submission is in progress
+  const navigation = useNavigation();
+
   // Access the action result (success or error)
   const actionData = useActionData();
+  let displayMessages = [...messages];
+
+  if (navigation.formData?.has("message")) {
+    const optimisticUIMessage = {
+      id: "optimistic-user",
+      type: "user",
+      content: navigation.formData.get("message"),
+    };
+
+    const optimisticBotResponse = {
+      id: "optimistic-bot",
+      type: "bot",
+      content: "Thinking...",
+    };
+
+    displayMessages.push(optimisticUIMessage, optimisticBotResponse);
+  }
 
   return (
     <main className="chat-container">
@@ -124,7 +144,7 @@ export default function ChatThread() {
           Edit
         </Link>
       </div>
-      <ChatMessages messages={messages} />
+      <ChatMessages messages={displayMessages} />
       <ChatInput />
       {actionData?.error && (
         <div className="error-message">{actionData.error}</div>
