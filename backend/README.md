@@ -393,6 +393,90 @@ Hvis `content` er tom eller kun består af whitespace, returneres:
 }
 ```
 
+### `PATCH /api/threads/:id`
+
+Opdaterer delvist en eksisterende chat-tråd. Endpointet bruges i øjeblikket til at ændre trådens titel uden at påvirke andre felter eller tilhørende beskeder.
+
+**URL-parameter:**
+
+| Parameter | Type | Beskrivelse |
+| --- | --- | --- |
+| `id` | UUID | ID'et på den chat-tråd, der skal opdateres |
+
+**Request body:**
+
+Requesten skal sendes som JSON med headeren `Content-Type: application/json`:
+
+```json
+{
+  "title": "En opdateret titel"
+}
+```
+
+Feltet `title` er påkrævet og må ikke være tomt eller kun indeholde whitespace.
+
+**Eksempel på request:**
+
+```bash
+curl -i -X PATCH http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "En opdateret titel"
+  }'
+```
+
+**Succesrespons: `200 OK`**
+
+Hvis tråden findes og titlen opdateres, returneres den opdaterede tråd:
+
+```json
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "title": "En opdateret titel",
+  "created_at": "2025-10-01T10:00:00.000Z"
+}
+```
+
+**Fejlrespons: `400 Bad Request`**
+
+Hvis `title` mangler, returneres:
+
+```json
+{
+  "error": "Missing required field: title is required"
+}
+```
+
+**Eksempel med manglende `title`:**
+
+```bash
+curl -i -X PATCH http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111 \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+Hvis `title` er tom eller kun indeholder whitespace, returneres den samme `400`-fejl:
+
+```bash
+curl -i -X PATCH http://localhost:3000/api/threads/11111111-1111-1111-1111-111111111111 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "   "
+  }'
+```
+
+**Fejlrespons: `404 Not Found`**
+
+Hvis der ikke findes en tråd med det angivne ID, returneres:
+
+```json
+{
+  "error": "Could not find thread to update"
+}
+```
+
+PATCH bruges i stedet for PUT, fordi endpointet kun ændrer ét felt, nemlig `title`. PUT bruges typisk til at erstatte hele ressourcen, mens PATCH er beregnet til delvise opdateringer.
+
 ### `DELETE /api/threads/:id`
 
 Sletter den chat-tråd, der identificeres af URL-parameteren. Når en tråd slettes, slettes alle tilhørende beskeder også automatisk på grund af `ON DELETE CASCADE`-relationen mellem `threads` og `messages`.

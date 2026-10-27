@@ -6,6 +6,7 @@ import {
   href,
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
+import { Outlet } from "react-router";
 
 export function ErrorBoundary() {
   const error = useRouteError();
@@ -116,8 +117,12 @@ export default function ChatThread() {
 
   return (
     <main className="chat-container">
+      <Outlet />
       <div className="chat-thread-header">
         <h2>{thread.title}</h2>
+        <Link to="edit" className="thread-title-edit-link">
+          Edit
+        </Link>
       </div>
       <ChatMessages messages={messages} />
       <ChatInput />

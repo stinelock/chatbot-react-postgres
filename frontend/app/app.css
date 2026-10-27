@@ -292,6 +292,9 @@ body {
 }
 
 .chat-thread-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   padding: 3rem 2rem;
   text-align: center;
@@ -410,4 +413,95 @@ body {
   border-radius: var(--border-radius-error);
   border: 1px solid var(--border-error);
   font-size: 0.875rem;
+}
+
+/* Edit */
+.edit-title-overlay {
+  width: full;
+  background: var(--bg-primary);
+  padding: 2rem;
+}
+
+.edit-title-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: end;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+.edit-title-form label {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-right: 1rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.title-input {
+  border: 1px solid var(--border-medium);
+  border-radius: var(--border-radius-medium);
+  padding: 0.5rem 0.75rem;
+  min-width: 200px;
+}
+
+.save-button {
+  background: var(--bg-button-primary);
+  color: var(--text-button);
+  border: none;
+  border-radius: var(--border-radius-large);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.save-button:hover {
+  background: var(--bg-button-primary-hover);
+}
+
+.cancel-button {
+  background: transparent;
+  color: var(--text-primary);
+  text-decoration: none;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--border-radius-large);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.cancel-button:hover {
+  background: var(--bg-button-secondary-hover);
+  color: var(--text-primary);
+}
+
+.thread-title-edit-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--border-radius-medium);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  transition: background 0.1s ease;
+  margin-left: 0.5rem;
+}
+
+.thread-title-edit-link:hover {
+  background: var(--bg-hover);
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
 }
