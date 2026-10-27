@@ -4,7 +4,6 @@ import { useState } from "react";
 
 const api_url = import.meta.env.VITE_API_URL;
 
-
 export async function clientLoader() {
   const url = `${api_url}/api/threads`;
   const response = await fetch(url);
@@ -20,11 +19,7 @@ export async function clientLoader() {
   return { threads };
 }
 
-
 export async function clientAction({ request }) {
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
   // Extract form data
   const formData = await request.formData();
   const intent = formData.get("intent");
@@ -33,24 +28,19 @@ export async function clientAction({ request }) {
   // Handle delete intent
   if (intent === "delete" && threadId) {
     try {
-      // DELETE request to Supabase
-      // Messages are automatically deleted due to CASCADE
-      const response = await fetch(
-        `${supabaseUrl}/rest/v1/threads?id=eq.${threadId}`,
-        {
-          method: "DELETE",
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-          },
-        },
-      );
+      const threadUrl = `${api_url}/api/threads/${threadId}`;
+      const threadResponse = await fetch(threadUrl, {
+        method: "DELETE",
+      });
 
-      if (!response.ok) {
-        return { error: `Failed to delete thread: ${response.status}` };
+      if (!threadResponse.ok) {
+        const result = await threadResponse.json();
+        return { error: result.error ?? `Failed to delete thread: ${threadResponse.status}` };
       }
 
-      return { success: true };
+      const result = await threadResponse.json();
+
+      return { success: true, message: result.message };
     } catch (error) {
       return { error: error.message };
     }

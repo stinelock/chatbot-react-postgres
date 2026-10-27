@@ -96,7 +96,7 @@ app.post("/api/threads/:id/messages", async (req, res) => {
 		const messages = await sql`
         INSERT INTO messages (thread_id, content, type)
         VALUES (${threadId}, ${trimmedContent}, ${type})
-        RETURNING * 
+        RETURNING content, type, thread_id, created_at 
         `;
 
 		const userMessage = messages[0];
@@ -178,42 +178,114 @@ app.post("/api/threads/:id/messages", async (req, res) => {
 	}
 });
 
-app.post("/api/test-groq", async (req, res) => {
-	const api_key = process.env.GROQ_API_KEY;
-	if (!api_key) {
-		return res
-			.status(500)
-			.json({ error: "Missing GROQ_API_KEY for chat answer logic" });
-	}
-
+app.delete("/api/threads/:id", async (req, res) => {
 	try {
-		const assistentResponse = await fetch(
-			"https://api.groq.com/openai/v1/chat/completions",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${api_key}`,
-				},
-				body: JSON.stringify({
-					model: "openai/gpt-oss-20b",
-					messages: req.body.messages,
-				}),
-			},
-		);
+		const threadId = req.params.id;
 
-		if (!assistentResponse.ok) {
-			throw new Response("Failed to fetch from GROQ API", {
-				status: assistentResponse.status,
+		if (!threadId) {
+			return res.status(400).json({
+				error: "The thread you wish to delete does not exist",
 			});
 		}
 
-		const data = await assistentResponse.json();
+		const deleteThread = await sql`
+        DELETE FROM threads
+        WHERE id = ${threadId}
+        RETURNING title`;
 
-		return res.status(201).json(data);
+		if (deleteThread.length === 0) {
+			return res.status(404).json({
+				error: "The thread you wish to delete does not exist",
+			});
+		}
+
+		return res.status(200).json({
+			message: `Thread with title "${deleteThread[0].title}" has been deleted`,
+		});
 	} catch (error) {
-		console.error("Failed to fetch from GROQ API:", error);
-		return res.status(500).json({ error: "Failed to fetch from GROQ API" });
+		console.error("Failed to delete thread:", error);
+		return res.status(500).json({
+			error: "Could not delete thread",
+		});
+	}
+});
+
+app.post("/api/threads", async (req, res) => {
+	try {
+		const { title, content } = req.body ?? {};
+		const TEST_USER_ID = "b94614de-f124-43de-b36f-81b44e09b024"; // Replace with the actual user ID later when implementing authentication
+
+		console.log(
+			"Received request to create thread with title:",
+			title,
+			"and content:",
+			content,
+		);
+
+		const trimmedTitle = title?.trim();
+		const trimmedContent = content?.trim();
+
+		if (!trimmedTitle || !trimmedContent) {
+			return res.status(400).json({
+				error: "Missing required fields: title and content are required",
+			});
+		}
+
+		// Sequelize transaction to ensure both thread and message are created together - otherwise if one fails, the other will not be created
+		const { thread, message } = await sql.begin(async (sql) => {
+			const [thread] = await sql`
+                INSERT INTO threads (title, user_id)
+                VALUES (${trimmedTitle}, ${TEST_USER_ID})
+                RETURNING id, title, created_at
+                `;
+
+			const [message] = await sql`
+                INSERT INTO messages (thread_id, type, content)
+                VALUES (${thread.id}, 'user', ${trimmedContent})
+                RETURNING id, thread_id, type, content, created_at
+                `;
+
+			return { thread, message };
+		});
+		res.status(201).json({ thread, message });
+	} catch (error) {
+		console.error("Failed to create thread:", error);
+		return res.status(500).json({
+			error: "Could not create thread",
+		});
+	}
+});
+
+app.patch("/api/threads/:id", async (req, res) => {
+	try {
+		const threadId = req.params.id;
+		const { title } = req.body ?? {};
+
+		if (!title || !title.trim()) {
+			return res.status(400).json({
+				error: "Missing required field: title is required",
+			});
+		}
+
+		const updatedThread = await sql`
+        UPDATE threads
+        SET title = ${title}
+        WHERE id = ${threadId}
+        RETURNING id, title, created_at
+        `;
+
+		if (updatedThread.length === 0) {
+			return res.status(404).json({
+				error: "Could not find thread to update",
+			});
+		}
+
+		return res.status(200).json(updatedThread[0]);
+	} catch (error) {
+		console.error("Failed to update thread:", error);
+		return res.status(500).json({
+			error: "Could not update thread",
+		});
 	}
 });
 
