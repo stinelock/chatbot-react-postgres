@@ -223,6 +223,97 @@ Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
 }
 ```
 
+### `POST /api/threads`
+
+Opretter en ny chat-tråd og dens første besked i én samlet operation. Endpointet indsætter først tråden i `threads`-tabellen og derefter den første brugerbesked i `messages`-tabellen.
+
+Dette er en compound operation: både tråden og den første besked oprettes i samme database-transaktion. Hvis en af de to databaseoperationer fejler, rulles hele operationen tilbage, så der ikke oprettes en tråd uden dens første besked eller omvendt.
+
+**Request body:**
+
+Requesten skal sendes som JSON med headeren `Content-Type: application/json`:
+
+```json
+{
+  "title": "Hvad er meningen med livet?",
+  "content": "Kan du hjælpe mig med at undersøge spørgsmålet?"
+}
+```
+
+Begge felter er påkrævede:
+
+| Felt | Type | Beskrivelse og begrænsninger |
+| --- | --- | --- |
+| `title` | String | Trådens titel. Den må ikke mangle, være tom eller kun indeholde whitespace. |
+| `content` | String | Den første beskeds tekst. Den må ikke mangle, være tom eller kun indeholde whitespace. |
+
+Omkringliggende whitespace fjernes fra begge felter, før de gemmes.
+
+**Eksempel på succesfuld request:**
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Hvad er meningen med livet?",
+    "content": "Kan du hjælpe mig med at undersøge spørgsmålet?"
+  }'
+```
+
+**Succesrespons: `201 Created`**
+
+Ved succes returneres både det oprettede thread-objekt og den oprettede message-objekt:
+
+```json
+{
+  "thread": {
+    "id": "11111111-1111-1111-1111-111111111111",
+    "title": "Hvad er meningen med livet?",
+    "created_at": "2025-10-01T10:00:00.000Z"
+  },
+  "message": {
+    "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+    "thread_id": "11111111-1111-1111-1111-111111111111",
+    "type": "user",
+    "content": "Kan du hjælpe mig med at undersøge spørgsmålet?",
+    "created_at": "2025-10-01T10:00:00.000Z"
+  }
+}
+```
+
+**Fejlrespons: `400 Bad Request`**
+
+Hvis `title` eller `content` mangler, returneres:
+
+```json
+{
+  "error": "Missing required fields: title and content are required"
+}
+```
+
+**Eksempel med manglende `content`:**
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "En tråd uden besked"
+  }'
+```
+
+Den samme `400`-fejl returneres, hvis `title` eller `content` er tom eller kun indeholder whitespace.
+
+**Eksempel med tomme værdier:**
+
+```bash
+curl -i -X POST http://localhost:3000/api/threads \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "   ",
+    "content": ""
+  }'
+```
+
 ### `POST /api/threads/:id/messages`
 
 Opretter en ny besked i den chat-tråd, der identificeres af URL-parameteren. Beskeden gemmes i `messages`-tabellen og returneres i response-bodyen.
