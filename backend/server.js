@@ -113,11 +113,9 @@ app.delete("/api/threads/:id", async (req, res) => {
 		const threadId = req.params.id;
 
 		if (!threadId) {
-			return res
-				.status(400)
-				.json({
-					error: "The thread you wish to delete does not exist",
-				});
+			return res.status(400).json({
+				error: "The thread you wish to delete does not exist",
+			});
 		}
 
 		const deleteThread = await sql`
@@ -138,6 +136,47 @@ app.delete("/api/threads/:id", async (req, res) => {
 		console.error("Failed to delete thread:", error);
 		return res.status(500).json({
 			error: "Could not delete thread",
+		});
+	}
+});
+
+app.post("/api/threads", async (req, res) => {
+	try {
+		const { title, content } = req.body ?? {};
+		const TEST_USER_ID = "b94614de-f124-43de-b36f-81b44e09b024"; // Replace with the actual user ID later when implementing authentication
+
+        console.log("Received request to create thread with title:", title, "and content:", content);
+
+		const trimmedTitle = title?.trim();
+		const trimmedContent = content?.trim();
+
+		if (!trimmedTitle || !trimmedContent) {
+			return res.status(400).json({
+				error: "Missing required fields: title and content are required",
+			});
+		}
+
+		// Sequelize transaction to ensure both thread and message are created together - otherwise if one fails, the other will not be created
+		const { thread, message } = await sql.begin(async (sql) => {
+			const [thread] = await sql`
+                INSERT INTO threads (title, user_id)
+                VALUES (${trimmedTitle}, ${TEST_USER_ID})
+                RETURNING id, title, created_at
+                `;
+
+			const [message] = await sql`
+                INSERT INTO messages (thread_id, type, content)
+                VALUES (${thread.id}, 'user', ${trimmedContent})
+                RETURNING id, thread_id, type, content, created_at
+                `;
+
+			return { thread, message };
+		});
+		res.status(201).json({ thread, message });
+	} catch (error) {
+		console.error("Failed to create thread:", error);
+		return res.status(500).json({
+			error: "Could not create thread",
 		});
 	}
 });
