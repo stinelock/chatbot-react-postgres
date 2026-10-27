@@ -126,16 +126,19 @@ app.delete("/api/threads/:id", async (req, res) => {
         RETURNING title`;
 
 		if (deleteThread.length === 0) {
-			return res
-				.status(404)
-				.json({
-					error: "The thread you wish to delete does not exist",
-				});
+			return res.status(404).json({
+				error: "The thread you wish to delete does not exist",
+			});
 		}
-        
-		return res.status(204).json({message: `Thread with title "${deleteThread[0].title}" has been deleted`});
+
+		return res.status(200).json({
+			message: `Thread with title "${deleteThread[0].title}" has been deleted`,
+		});
 	} catch (error) {
-		throw new Response(error + "Could not delete thread", { status: 400 });
+		console.error("Failed to delete thread:", error);
+		return res.status(500).json({
+			error: "Could not delete thread",
+		});
 	}
 });
 
