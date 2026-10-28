@@ -1,4 +1,5 @@
 import { Form, Link, redirect, useActionData, useNavigation } from "react-router";
+import { useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export async function clientAction({ request }) {
@@ -34,64 +35,72 @@ export default function Register() {
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting"
 
+    const [theme, setTheme] = useState(() => {
+      if (typeof window === "undefined") {
+        return "light";
+      }
+
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    });
+
 	return (
-		<div className="auth-container">
-			<div className="auth-card">
-				<h1>Create Account</h1>
-				<p className="auth-subtitle">Sign up with email and password</p>
+    <div className="auth-container" data-theme={theme}>
+      <div className="auth-card">
+        <h1>Create Account</h1>
+        <p className="auth-subtitle">Sign up with email and password</p>
 
-				<Form method="post" className="auth-form">
-					<div className="form-group">
-						<label htmlFor="email">Email</label>
-						<input
-							type="email"
-							id="email"
-							name="email"
-							// required
-							autoComplete="email"
-							placeholder="you@example.com"
-						/>
-					</div>
+        <Form method="post" className="auth-form">
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autoComplete="email"
+              placeholder="you@example.com"
+            />
+          </div>
 
-					<div className="form-group">
-						<label htmlFor="password">Password</label>
-						<input
-							type="password"
-							id="password"
-							name="password"
-							// required
-							autoComplete="new-password"
-							// minLength={6}
-							placeholder="At least 6 characters"
-						/>
-					</div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autoComplete="new-password"
+              minLength={6}
+              placeholder="At least 6 characters"
+            />
+          </div>
 
-					<div className="form-group">
-						<label htmlFor="confirmPassword">
-							Confirm Password
-						</label>
-						<input
-							type="password"
-							id="confirmPassword"
-							name="confirmPassword"
-							// required
-							autoComplete="new-password"
-							// minLength={6}
-							placeholder="Re-enter your password"
-						/>
-					</div>
-					{actionData?.error && (
-						<div className="error-message">{actionData.error}</div>
-					)}
-					<button type="submit" disabled={isSubmitting} className="btn-primary">
-						{isSubmitting ? "Creating account..." : "Create Account"}
-					</button>
-				</Form>
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+              autoComplete="new-password"
+              minLength={6}
+              placeholder="Re-enter your password"
+            />
+          </div>
+          {actionData?.error && (
+            <div className="error-message">{actionData.error}</div>
+          )}
+          <button type="submit" disabled={isSubmitting} className="btn-primary">
+            {isSubmitting ? "Creating account..." : "Create Account"}
+          </button>
+        </Form>
 
-				<p className="auth-footer">
-					Already have an account? <Link to="/login">Log in</Link>
-				</p>
-			</div>
-		</div>
-	);
+        <p className="auth-footer">
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
+      </div>
+    </div>
+  );
 }
