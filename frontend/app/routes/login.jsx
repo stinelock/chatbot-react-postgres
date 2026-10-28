@@ -6,8 +6,8 @@ import {
   useNavigation,
   useSearchParams,
 } from "react-router";
-import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import useTheme from "../hooks/useTheme.js";
 
 export async function clientAction({ request }) {
   const formData = await request.formData();
@@ -37,16 +37,7 @@ export default function Login() {
 
   const [searchParams] = useSearchParams();
   const justRegistered = searchParams.get("registered") === "true";
-
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === "undefined") {
-      return "light";
-    }
-
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  });
+  const { theme } = useTheme();
 
   return (
     <div className="auth-container" data-theme={theme}>

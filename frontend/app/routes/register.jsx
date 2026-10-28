@@ -1,6 +1,6 @@
 import { Form, Link, redirect, useActionData, useNavigation } from "react-router";
-import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import useTheme from "../hooks/useTheme.js";
 
 export async function clientAction({ request }) {
 	const formData = await request.formData();
@@ -35,15 +35,7 @@ export default function Register() {
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting"
 
-    const [theme, setTheme] = useState(() => {
-      if (typeof window === "undefined") {
-        return "light";
-      }
-
-      return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-    });
+    const { theme } = useTheme();
 
 	return (
     <div className="auth-container" data-theme={theme}>
