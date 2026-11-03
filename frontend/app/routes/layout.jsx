@@ -28,20 +28,19 @@ export async function clientAction({ request }) {
   // Handle delete intent
   if (intent === "delete" && threadId) {
     try {
-      const threadUrl = `${api_url}/api/threads/${threadId}`;
-      const threadResponse = await fetch(threadUrl, {
+      const response = await apiFetch(`/api/threads/${threadId}`, {
         method: "DELETE",
       });
 
-      if (!threadResponse.ok) {
-        const result = await threadResponse.json();
+      if (!response.ok) {
+        const result = await response.json();
         return {
           error:
-            result.error ?? `Failed to delete thread: ${threadResponse.status}`,
+            result.error ?? `Failed to delete thread: ${response.status}`,
         };
       }
 
-      const result = await threadResponse.json();
+      const result = await response.json();
 
       return { success: true, message: result.message };
     } catch (error) {
