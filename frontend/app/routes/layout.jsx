@@ -64,7 +64,7 @@ export default function Layout() {
     <div className="app-layout" data-theme={theme}>
       <Sidebar threads={threads} />
       <main className="main-content">
-        <Outlet theme={theme} onToggleTheme={toggleTheme} />
+        <Outlet context={{ theme, onToggleTheme: toggleTheme }} />
       </main>
     </div>
   );

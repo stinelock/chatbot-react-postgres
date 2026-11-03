@@ -1,4 +1,4 @@
-import { useActionData, redirect } from "react-router";
+import { useActionData, redirect, useOutletContext } from "react-router";
 import { ChatInput, ChatMessages } from "../components/Chat.jsx";
 import apiFetch from "../lib/apiFetch.js";
 
@@ -47,6 +47,7 @@ export async function clientAction({ request }) {
 export default function ChatNew() {
   // Access action result for error display
   const actionData = useActionData();
+  const { theme, onToggleTheme } = useOutletContext();
 
   return (
     <main className="chat-container">
@@ -55,7 +56,7 @@ export default function ChatNew() {
         <p>Type a message below to begin chatting</p>
       </div>
       <ChatMessages />
-      <ChatInput />
+      <ChatInput theme={theme} onToggleTheme={onToggleTheme} />
       {actionData?.error && (
         <div className="error-message">{actionData.error}</div>
       )}

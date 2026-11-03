@@ -5,6 +5,7 @@ import {
   useRouteError,
   href,
   useNavigation,
+  useOutletContext,
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 import { Outlet } from "react-router";
@@ -116,6 +117,7 @@ export default function ChatThread() {
 
   // Access the action result (success or error)
   const actionData = useActionData();
+  const { theme, onToggleTheme } = useOutletContext();
   let displayMessages = [...messages];
 
   if (navigation.formData?.has("message")) {
@@ -144,7 +146,7 @@ export default function ChatThread() {
         </Link>
       </div>
       <ChatMessages messages={displayMessages} />
-      <ChatInput />
+      <ChatInput theme={theme} onToggleTheme={onToggleTheme} />
       {actionData?.error && (
         <div className="error-message">{actionData.error}</div>
       )}
