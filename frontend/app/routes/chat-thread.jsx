@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 import { Outlet } from "react-router";
+import apiFetch from "../lib/apiFetch.js";
 
 export function ErrorBoundary() {
   const error = useRouteError();
@@ -32,11 +33,8 @@ export function ErrorBoundary() {
   );
 }
 
-const api_url = import.meta.env.VITE_API_URL;
-
 export async function clientLoader({ params }) {
-  const threadUrl = `${api_url}/api/threads/${params.threadId}`;
-  const threadResponse = await fetch(threadUrl);
+  const threadResponse = await apiFetch(`/api/threads/${params.threadId}`);
 
   if (!threadResponse.ok) {
     throw new Error(`Failed to fetch thread: ${threadResponse.status}`);
@@ -48,8 +46,9 @@ export async function clientLoader({ params }) {
     throw new Response("Thread not found", { status: 404 });
   }
 
-  const messagesUrl = `${api_url}/api/threads/${params.threadId}/messages`;
-  const messagesResponse = await fetch(messagesUrl);
+  const messagesResponse = await apiFetch(
+    `/api/threads/${params.threadId}/messages`,
+  );
 
   if (!messagesResponse.ok) {
     throw new Response(`Failed to fetch messages: ${messagesResponse.status}`);
@@ -81,8 +80,8 @@ export async function clientAction({ params, request }) {
 
   // POST to API to create the message in Supabase
   try {
-    const response = await fetch(
-      `${api_url}/api/threads/${params.threadId}/messages`,
+    const response = await apiFetch(
+      `/api/threads/${params.threadId}/messages`,
       {
         method: "POST",
         headers: {
