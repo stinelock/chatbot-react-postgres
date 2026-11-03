@@ -1,12 +1,11 @@
 import { Outlet, useLoaderData, redirect } from "react-router";
 import Sidebar from "../components/Sidebar.jsx";
 import useTheme from "../hooks/useTheme.js";
-
-const api_url = import.meta.env.VITE_API_URL;
+import apiFetch from "../lib/apiFetch.js";
+import { supabase } from "../lib/supabase.js";
 
 export async function clientLoader() {
-  const url = `${api_url}/api/threads`;
-  const response = await fetch(url);
+  const response = await apiFetch("/api/threads");
 
   // Check if the request was successful
   if (!response.ok) {
@@ -28,22 +27,29 @@ export async function clientAction({ request }) {
   // Handle delete intent
   if (intent === "delete" && threadId) {
     try {
-      const threadUrl = `${api_url}/api/threads/${threadId}`;
-      const threadResponse = await fetch(threadUrl, {
+      const response = await apiFetch(`/api/threads/${threadId}`, {
         method: "DELETE",
       });
 
-      if (!threadResponse.ok) {
-        const result = await threadResponse.json();
-        return { error: result.error ?? `Failed to delete thread: ${threadResponse.status}` };
+      if (!response.ok) {
+        const result = await response.json();
+        return {
+          error: result.error ?? `Failed to delete thread: ${response.status}`,
+        };
       }
 
-      const result = await threadResponse.json();
+      const result = await response.json();
 
       return { success: true, message: result.message };
     } catch (error) {
       return { error: error.message };
     }
+  }
+
+  if (intent === "logout") {
+    await supabase.auth.signOut();
+
+    return redirect("/login");
   }
 
   return null;
@@ -56,9 +62,9 @@ export default function Layout() {
 
   return (
     <div className="app-layout" data-theme={theme}>
-      <Sidebar threads={threads} theme={theme} onToggleTheme={toggleTheme} />
+      <Sidebar threads={threads} />
       <main className="main-content">
-        <Outlet />
+        <Outlet context={{ theme, onToggleTheme: toggleTheme }} />
       </main>
     </div>
   );

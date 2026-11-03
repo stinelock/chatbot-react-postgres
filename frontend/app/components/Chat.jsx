@@ -24,11 +24,11 @@ function ChatMessages({ messages = [] }) {
 }
 
 
-function ChatInput() {
+function ChatInput({ theme, onToggleTheme }) {
   return (
     <div className="chat-input-container">
       <Form method="post" className="chat-input-wrapper">
-        <textarea
+        <input
           name="message"
           className="chat-input"
           placeholder="Type your message here..."
@@ -39,6 +39,15 @@ function ChatInput() {
           Send
         </button>
       </Form>
+      <button
+        type="button"
+        className="theme-toggle-btn"
+        aria-label="Toggle theme"
+        title="Toggle light/dark theme"
+        onClick={onToggleTheme}
+      >
+        {theme === "light" ? "🌞" : "🌙"}
+      </button>
     </div>
   );
 }

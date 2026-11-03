@@ -1,4 +1,5 @@
 import React from "react";
+import { useOutletContext } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 
 const initialMessages = [
@@ -61,6 +62,7 @@ const initialMessages = [
 
 
 export default function Home() {
+  const { theme, onToggleTheme } = useOutletContext();
   // STATE: Convert static data to dynamic state
   const [messages, setMessages] = React.useState(initialMessages);
 
@@ -81,7 +83,11 @@ export default function Home() {
       {/* Passing messages state as props - DATA FLOW! */}
       <ChatMessages messages={messages} />
       {/* Passing callback function as props - CALLBACK PROPS! */}
-      <ChatInput onAddMessage={addMessage} />
+      <ChatInput
+        onAddMessage={addMessage}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+      />
     </section>
   );
 }

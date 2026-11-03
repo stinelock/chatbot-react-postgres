@@ -5,9 +5,11 @@ import {
   useRouteError,
   href,
   useNavigation,
+  useOutletContext,
 } from "react-router";
 import { ChatMessages, ChatInput } from "../components/Chat.jsx";
 import { Outlet } from "react-router";
+import apiFetch from "../lib/apiFetch.js";
 
 export function ErrorBoundary() {
   const error = useRouteError();
@@ -32,11 +34,8 @@ export function ErrorBoundary() {
   );
 }
 
-const api_url = import.meta.env.VITE_API_URL;
-
 export async function clientLoader({ params }) {
-  const threadUrl = `${api_url}/api/threads/${params.threadId}`;
-  const threadResponse = await fetch(threadUrl);
+  const threadResponse = await apiFetch(`/api/threads/${params.threadId}`);
 
   if (!threadResponse.ok) {
     throw new Error(`Failed to fetch thread: ${threadResponse.status}`);
@@ -48,8 +47,9 @@ export async function clientLoader({ params }) {
     throw new Response("Thread not found", { status: 404 });
   }
 
-  const messagesUrl = `${api_url}/api/threads/${params.threadId}/messages`;
-  const messagesResponse = await fetch(messagesUrl);
+  const messagesResponse = await apiFetch(
+    `/api/threads/${params.threadId}/messages`,
+  );
 
   if (!messagesResponse.ok) {
     throw new Response(`Failed to fetch messages: ${messagesResponse.status}`);
@@ -81,8 +81,8 @@ export async function clientAction({ params, request }) {
 
   // POST to API to create the message in Supabase
   try {
-    const response = await fetch(
-      `${api_url}/api/threads/${params.threadId}/messages`,
+    const response = await apiFetch(
+      `/api/threads/${params.threadId}/messages`,
       {
         method: "POST",
         headers: {
@@ -117,6 +117,7 @@ export default function ChatThread() {
 
   // Access the action result (success or error)
   const actionData = useActionData();
+  const { theme, onToggleTheme } = useOutletContext();
   let displayMessages = [...messages];
 
   if (navigation.formData?.has("message")) {
@@ -145,7 +146,7 @@ export default function ChatThread() {
         </Link>
       </div>
       <ChatMessages messages={displayMessages} />
-      <ChatInput />
+      <ChatInput theme={theme} onToggleTheme={onToggleTheme} />
       {actionData?.error && (
         <div className="error-message">{actionData.error}</div>
       )}

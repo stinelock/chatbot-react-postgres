@@ -1,7 +1,6 @@
-import { useActionData, redirect } from "react-router";
+import { useActionData, redirect, useOutletContext } from "react-router";
 import { ChatInput, ChatMessages } from "../components/Chat.jsx";
-
-const api_url = import.meta.env.VITE_API_URL;
+import apiFetch from "../lib/apiFetch.js";
 
 export async function clientAction({ request }) {
 
@@ -22,7 +21,7 @@ export async function clientAction({ request }) {
 
   try {
     // Step 1: Create the thread
-    const response = await fetch(`${api_url}/api/threads`, {
+    const response = await apiFetch(`/api/threads`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -48,6 +47,7 @@ export async function clientAction({ request }) {
 export default function ChatNew() {
   // Access action result for error display
   const actionData = useActionData();
+  const { theme, onToggleTheme } = useOutletContext();
 
   return (
     <main className="chat-container">
@@ -56,7 +56,7 @@ export default function ChatNew() {
         <p>Type a message below to begin chatting</p>
       </div>
       <ChatMessages />
-      <ChatInput />
+      <ChatInput theme={theme} onToggleTheme={onToggleTheme} />
       {actionData?.error && (
         <div className="error-message">{actionData.error}</div>
       )}

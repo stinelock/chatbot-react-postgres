@@ -1,6 +1,5 @@
 import { useRouteLoaderData, Form, Link, redirect } from "react-router";
-
-const api_url = import.meta.env.VITE_API_URL;
+import apiFetch from "../lib/apiFetch.js";
 
 export async function clientAction({ params, request }) {
   const formData = await request.formData();
@@ -12,7 +11,7 @@ export async function clientAction({ params, request }) {
   }
 
   try {
-    const response = await fetch(`${api_url}/api/threads/${params.threadId}`, {
+    const response = await apiFetch(`/api/threads/${params.threadId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
