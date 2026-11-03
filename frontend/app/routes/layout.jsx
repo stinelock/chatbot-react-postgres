@@ -2,6 +2,7 @@ import { Outlet, useLoaderData, redirect } from "react-router";
 import Sidebar from "../components/Sidebar.jsx";
 import useTheme from "../hooks/useTheme.js";
 import apiFetch from "../lib/apiFetch.js";
+import { supabase } from "../lib/supabase.js";
 
 export async function clientLoader() {
   const response = await apiFetch("/api/threads");
@@ -21,7 +22,6 @@ export async function clientAction({ request }) {
   // Extract form data
   const formData = await request.formData();
   const intent = formData.get("intent");
-  console.log(intent);
   const threadId = formData.get("threadId");
 
   // Handle delete intent
@@ -34,8 +34,7 @@ export async function clientAction({ request }) {
       if (!response.ok) {
         const result = await response.json();
         return {
-          error:
-            result.error ?? `Failed to delete thread: ${response.status}`,
+          error: result.error ?? `Failed to delete thread: ${response.status}`,
         };
       }
 
@@ -45,6 +44,12 @@ export async function clientAction({ request }) {
     } catch (error) {
       return { error: error.message };
     }
+  }
+
+  if (intent === "logout") {
+    await supabase.auth.signOut();
+
+    return redirect("/login");
   }
 
   return null;
