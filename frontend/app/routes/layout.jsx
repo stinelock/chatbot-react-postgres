@@ -3,8 +3,6 @@ import Sidebar from "../components/Sidebar.jsx";
 import useTheme from "../hooks/useTheme.js";
 import apiFetch from "../lib/apiFetch.js";
 
-const api_url = import.meta.env.VITE_API_URL;
-
 export async function clientLoader() {
   const response = await apiFetch("/api/threads");
 
@@ -23,6 +21,7 @@ export async function clientAction({ request }) {
   // Extract form data
   const formData = await request.formData();
   const intent = formData.get("intent");
+  console.log(intent);
   const threadId = formData.get("threadId");
 
   // Handle delete intent
@@ -58,9 +57,9 @@ export default function Layout() {
 
   return (
     <div className="app-layout" data-theme={theme}>
-      <Sidebar threads={threads} theme={theme} onToggleTheme={toggleTheme} />
+      <Sidebar threads={threads} />
       <main className="main-content">
-        <Outlet />
+        <Outlet theme={theme} onToggleTheme={toggleTheme} />
       </main>
     </div>
   );
