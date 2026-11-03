@@ -1,6 +1,7 @@
 import React from "react";
 import { href, Link, NavLink, useFetcher, Form } from "react-router";
-
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
 
 function SidebarHeader() {
   return (
@@ -94,6 +95,19 @@ function ChatThreadsList({ threads = [] }) {
 }
 
 function SidebarFooter() {
+  const [userEmail, setUserEmail] = useState(null);
+
+  useEffect(() => {
+    async function LoadSession() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setUserEmail(session?.user.email);
+    }
+    LoadSession();
+  }, []);
+
   return (
     <div className="sidebar-footer">
       <div className="user-profile">
@@ -109,19 +123,17 @@ function SidebarFooter() {
           </button>
         </Form>
         <img
-          src="https://ui-avatars.com/api/?name=Batman&background=0D0D0D&color=fff&size=40"
+          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userEmail || "User")}&background=0D0D0D&color=fff&size=40`}
           alt="User avatar"
           className="user-avatar"
           width={30}
           height={30}
         />
-        <span className="user-name">Batman</span>
+        <span className="user-name">{userEmail || "loading..."}</span>
       </div>
-     
     </div>
   );
 }
-
 
 export default function Sidebar({ threads }) {
   return (
