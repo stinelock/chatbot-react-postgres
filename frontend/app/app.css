@@ -221,7 +221,7 @@ body {
 }
 
 .chat-thread-item-content button {
-  visibility: hidden;
+  visibility: visible;
   border: none;
   border-radius: var(--border-radius-small);
   padding: 0.25rem 0.5rem;

@@ -1,0 +1,23 @@
+{
+  "name": "chatbot-react-postgres",
+  "version": "1.0.0",
+  "description": "This repository serves as a reference implementation for a classroom project where students build a chatbot UI with full CRUD functionality, progressing from basic React components to a complete full-stack application with custom API and database integration.",
+  "main": "index.js",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stinelock/chatbot-react-postgres.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/stinelock/chatbot-react-postgres/issues"
+  },
+  "homepage": "https://github.com/stinelock/chatbot-react-postgres#readme"
+}
