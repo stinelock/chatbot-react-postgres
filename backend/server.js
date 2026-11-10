@@ -20,6 +20,7 @@ app.get("/api/threads", requireAuth, async (req, res) => {
 		const threads = await sql`  
         SELECT id, title, created_at
         FROM threads
+        WHERE user_id = ${req.userId}
         ORDER BY created_at DESC
         `;
 
@@ -34,9 +35,9 @@ app.get("/api/threads/:id", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
 		const threads = await sql`
-        SELECT id, title, created_at
+        SELECT id, title, created_at, user_id
         FROM threads
-        WHERE id = ${threadId}`;
+        WHERE id = ${threadId} AND user_id = ${req.userId}`;
 
 		if (threads.length === 0) {
 			return res
@@ -54,6 +55,17 @@ app.get("/api/threads/:id", requireAuth, async (req, res) => {
 app.get("/api/threads/:id/messages", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
+
+		const threads = await sql`
+         SELECT id 
+         FROM threads 
+         WHERE id = ${threadId} AND user_id = ${req.userId}
+        `;
+
+		if (threads.length === 0) {
+			return res.json([]); // Tomt array, ikke 404
+		}
+
 		const messages = await sql`
         SELECT id, content, type, thread_id, created_at
         FROM messages
@@ -91,6 +103,19 @@ app.post("/api/threads/:id/messages", requireAuth, async (req, res) => {
 		if (!trimmedContent) {
 			return res.status(400).json({
 				error: "Message content cannot be empty",
+			});
+		}
+
+		const threads = await sql`
+        SELECT id 
+        FROM threads 
+        WHERE id = ${threadId} AND user_id = ${req.userId}
+        `;
+
+		// If thread doesn't exist or user doesn't own it, return 404
+		if (threads.length === 0) {
+			return res.status(404).json({
+				error: "Thread not found",
 			});
 		}
 
@@ -191,7 +216,7 @@ app.delete("/api/threads/:id", requireAuth, async (req, res) => {
 
 		const deleteThread = await sql`
         DELETE FROM threads
-        WHERE id = ${threadId}
+        WHERE id = ${threadId} AND user_id = ${req.userId}
         RETURNING title`;
 
 		if (deleteThread.length === 0) {
@@ -214,7 +239,6 @@ app.delete("/api/threads/:id", requireAuth, async (req, res) => {
 app.post("/api/threads", requireAuth, async (req, res) => {
 	try {
 		const { title, content } = req.body ?? {};
-		const TEST_USER_ID = "b94614de-f124-43de-b36f-81b44e09b024"; // Replace with the actual user ID later when implementing authentication
 
 		console.log(
 			"Received request to create thread with title:",
@@ -236,8 +260,8 @@ app.post("/api/threads", requireAuth, async (req, res) => {
 		const { thread, message } = await sql.begin(async (sql) => {
 			const [thread] = await sql`
                 INSERT INTO threads (title, user_id)
-                VALUES (${trimmedTitle}, ${TEST_USER_ID})
-                RETURNING id, title, created_at
+                VALUES (${trimmedTitle}, ${req.userId})
+                RETURNING id, title, created_at, user_id
                 `;
 
 			const [message] = await sql`
@@ -271,7 +295,7 @@ app.patch("/api/threads/:id", requireAuth, async (req, res) => {
 		const updatedThread = await sql`
         UPDATE threads
         SET title = ${title}
-        WHERE id = ${threadId}
+        WHERE id = ${threadId} AND user_id = ${req.userId}
         RETURNING id, title, created_at
         `;
 
