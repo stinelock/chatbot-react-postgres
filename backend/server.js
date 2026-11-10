@@ -20,6 +20,7 @@ app.get("/api/threads", requireAuth, async (req, res) => {
 		const threads = await sql`  
         SELECT id, title, created_at
         FROM threads
+        WHERE user_id = ${req.userId}
         ORDER BY created_at DESC
         `;
 
@@ -34,9 +35,9 @@ app.get("/api/threads/:id", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
 		const threads = await sql`
-        SELECT id, title, created_at
+        SELECT id, title, created_at, user_id
         FROM threads
-        WHERE id = ${threadId}`;
+        WHERE id = ${threadId} AND user_id = ${req.userId}`;
 
 		if (threads.length === 0) {
 			return res
@@ -54,6 +55,17 @@ app.get("/api/threads/:id", requireAuth, async (req, res) => {
 app.get("/api/threads/:id/messages", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
+
+		const threads = await sql`
+         SELECT id 
+         FROM threads 
+         WHERE id = ${threadId} AND user_id = ${req.userId}
+        `;
+
+		if (threads.length === 0) {
+			return res.json([]); // Tomt array, ikke 404
+		}
+
 		const messages = await sql`
         SELECT id, content, type, thread_id, created_at
         FROM messages
@@ -235,7 +247,7 @@ app.post("/api/threads", requireAuth, async (req, res) => {
 		const { thread, message } = await sql.begin(async (sql) => {
 			const [thread] = await sql`
                 INSERT INTO threads (title, user_id)
-                VALUES (${trimmedTitle}, ${req.user_id})
+                VALUES (${trimmedTitle}, ${req.userId})
                 RETURNING id, title, created_at, user_id
                 `;
 
