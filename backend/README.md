@@ -83,6 +83,8 @@ Alle endpoints returnerer JSON. CORS er aktiveret, så frontend-applikationen ka
 
 Returnerer et simpelt svar, som kan bruges til at kontrollere, om serveren svarer.
 
+**Authentication:** Kræver ikke autentificering.
+
 **Eksempel på request:**
 
 ```bash
@@ -98,6 +100,8 @@ curl http://localhost:3000/
 ### `GET /api/threads`
 
 Henter alle chat-tråde fra `threads`-tabellen. Resultatet indeholder kun `id`, `title` og `created_at`, og trådene sorteres med de nyeste først.
+
+**Authentication:** Kræver en gyldig Supabase access token i headeren `Authorization: Bearer <access-token>`.
 
 **Eksempel på request:**
 
@@ -133,6 +137,8 @@ Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
 ### `GET /api/threads/:id`
 
 Henter én chat-tråd ud fra dens UUID.
+
+**Authentication:** Kræver en gyldig Supabase access token i headeren `Authorization: Bearer <access-token>`.
 
 **URL-parameter:**
 
@@ -175,6 +181,8 @@ Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
 ### `GET /api/threads/:id/messages`
 
 Henter alle beskeder i en bestemt chat-tråd. Beskederne sorteres fra ældst til nyest efter `created_at`.
+
+**Authentication:** Kræver en gyldig Supabase access token i headeren `Authorization: Bearer <access-token>`.
 
 **URL-parameter:**
 
@@ -226,6 +234,8 @@ Hvis databasen ikke kan kontaktes, returnerer endpointet HTTP 500:
 ### `POST /api/threads`
 
 Opretter en ny chat-tråd og dens første besked i én samlet operation. Endpointet indsætter først tråden i `threads`-tabellen og derefter den første brugerbesked i `messages`-tabellen.
+
+**Authentication:** Kræver en gyldig Supabase access token i headeren `Authorization: Bearer <access-token>`.
 
 Dette er en compound operation: både tråden og den første besked oprettes i samme database-transaktion. Hvis en af de to databaseoperationer fejler, rulles hele operationen tilbage, så der ikke oprettes en tråd uden dens første besked eller omvendt.
 
@@ -318,6 +328,8 @@ curl -i -X POST http://localhost:3000/api/threads \
 
 Opretter en ny besked i den chat-tråd, der identificeres af URL-parameteren. Beskeden gemmes i `messages`-tabellen og returneres i response-bodyen.
 
+**Authentication:** Kræver en gyldig Supabase access token i headeren `Authorization: Bearer <access-token>`.
+
 **URL-parameter:**
 
 | Parameter | Type | Beskrivelse |
@@ -396,6 +408,8 @@ Hvis `content` er tom eller kun består af whitespace, returneres:
 ### `PATCH /api/threads/:id`
 
 Opdaterer delvist en eksisterende chat-tråd. Endpointet bruges i øjeblikket til at ændre trådens titel uden at påvirke andre felter eller tilhørende beskeder.
+
+**Authentication:** Kræver en gyldig Supabase access token i headeren `Authorization: Bearer <access-token>`.
 
 **URL-parameter:**
 
@@ -480,6 +494,8 @@ PATCH bruges i stedet for PUT, fordi endpointet kun ændrer ét felt, nemlig `ti
 ### `DELETE /api/threads/:id`
 
 Sletter den chat-tråd, der identificeres af URL-parameteren. Når en tråd slettes, slettes alle tilhørende beskeder også automatisk på grund af `ON DELETE CASCADE`-relationen mellem `threads` og `messages`.
+
+**Authentication:** Kræver en gyldig Supabase access token i headeren `Authorization: Bearer <access-token>`.
 
 **Advarsel:** Sletningen er permanent og kan ikke fortrydes. Tråden og alle dens beskeder fjernes permanent fra databasen. Kontrollér derfor altid `id`-værdien, før endpointet kaldes.
 

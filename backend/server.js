@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import sql from "./db.js";
+import { requireAuth } from "./auth.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -14,7 +15,7 @@ app.get("/", (req, res) => {
 	res.json("Velkommen til!");
 });
 
-app.get("/api/threads", async (req, res) => {
+app.get("/api/threads", requireAuth, async (req, res) => {
 	try {
 		const threads = await sql`  
         SELECT id, title, created_at
@@ -29,7 +30,7 @@ app.get("/api/threads", async (req, res) => {
 	}
 });
 
-app.get("/api/threads/:id", async (req, res) => {
+app.get("/api/threads/:id", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
 		const threads = await sql`
@@ -50,7 +51,7 @@ app.get("/api/threads/:id", async (req, res) => {
 	}
 });
 
-app.get("/api/threads/:id/messages", async (req, res) => {
+app.get("/api/threads/:id/messages", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
 		const messages = await sql`
@@ -68,7 +69,7 @@ app.get("/api/threads/:id/messages", async (req, res) => {
 	}
 });
 
-app.post("/api/threads/:id/messages", async (req, res) => {
+app.post("/api/threads/:id/messages", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
 		const { content, type } = req.body ?? {};
@@ -122,7 +123,7 @@ app.post("/api/threads/:id/messages", async (req, res) => {
 				"you are polite and friendly, but only answers factually. you answer questions based on the context provided by the user. if you don't know the answer, you say 'I don't know'. Be educational and helpful, but do not make up answers. If the user asks you to make up an answer, politely decline and say that you cannot do that.",
 		};
 
-        groqMessages.unshift(structure);
+		groqMessages.unshift(structure);
 
 		const api_key = process.env.GROQ_API_KEY;
 		let data;
@@ -178,7 +179,7 @@ app.post("/api/threads/:id/messages", async (req, res) => {
 	}
 });
 
-app.delete("/api/threads/:id", async (req, res) => {
+app.delete("/api/threads/:id", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
 
@@ -210,7 +211,7 @@ app.delete("/api/threads/:id", async (req, res) => {
 	}
 });
 
-app.post("/api/threads", async (req, res) => {
+app.post("/api/threads", requireAuth, async (req, res) => {
 	try {
 		const { title, content } = req.body ?? {};
 		const TEST_USER_ID = "b94614de-f124-43de-b36f-81b44e09b024"; // Replace with the actual user ID later when implementing authentication
@@ -256,7 +257,7 @@ app.post("/api/threads", async (req, res) => {
 	}
 });
 
-app.patch("/api/threads/:id", async (req, res) => {
+app.patch("/api/threads/:id", requireAuth, async (req, res) => {
 	try {
 		const threadId = req.params.id;
 		const { title } = req.body ?? {};
