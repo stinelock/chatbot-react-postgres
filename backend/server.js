@@ -214,7 +214,6 @@ app.delete("/api/threads/:id", requireAuth, async (req, res) => {
 app.post("/api/threads", requireAuth, async (req, res) => {
 	try {
 		const { title, content } = req.body ?? {};
-		const TEST_USER_ID = "b94614de-f124-43de-b36f-81b44e09b024"; // Replace with the actual user ID later when implementing authentication
 
 		console.log(
 			"Received request to create thread with title:",
@@ -236,8 +235,8 @@ app.post("/api/threads", requireAuth, async (req, res) => {
 		const { thread, message } = await sql.begin(async (sql) => {
 			const [thread] = await sql`
                 INSERT INTO threads (title, user_id)
-                VALUES (${trimmedTitle}, ${TEST_USER_ID})
-                RETURNING id, title, created_at
+                VALUES (${trimmedTitle}, ${req.user_id})
+                RETURNING id, title, created_at, user_id
                 `;
 
 			const [message] = await sql`
