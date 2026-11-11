@@ -39,7 +39,7 @@ export default function Login() {
 
   const [searchParams] = useSearchParams();
   const justRegistered = searchParams.get("registered") === "true";
-  const wasRedirected = searchParams.has("redirect") === "true"
+  const wasRedirected = searchParams.has("redirect");
   const { theme } = useTheme();
 
   return (
