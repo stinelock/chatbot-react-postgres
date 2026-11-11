@@ -27,7 +27,9 @@ export async function clientAction({ request }) {
     return { error: "Invalid email or password" };
   }
 
-  return redirect("/");
+  const url = new URL(request.url);
+  const redirectTo = url.searchParams.get("redirect") || "/";
+  return redirect(redirectTo);
 }
 
 export default function Login() {
@@ -37,6 +39,7 @@ export default function Login() {
 
   const [searchParams] = useSearchParams();
   const justRegistered = searchParams.get("registered") === "true";
+  const wasRedirected = searchParams.has("redirect");
   const { theme } = useTheme();
 
   return (
@@ -48,6 +51,11 @@ export default function Login() {
         {justRegistered && (
           <div className="success-message">
             Your account has successfully been created! Please log in.
+          </div>
+        )}
+        {wasRedirected && (
+          <div className="info-message">
+            Your session has expired. Please log in again.
           </div>
         )}
 
